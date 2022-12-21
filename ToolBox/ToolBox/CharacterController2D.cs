@@ -21,6 +21,7 @@ namespace ToolBox.Control
         }
 
         public Mode mode;
+        public bool IsGrounded { get; private set; }
 
         private Vector3 lastDirection;
 
@@ -76,10 +77,10 @@ namespace ToolBox.Control
 
         private void FixedUpdate()
         {
-            rigidBody.MovePosition(newPosition);
+            UpdateRigidBody();
         }
 
-        private void UpdateVelocity()
+        private void UpdateRigidBody()
         {
             switch(mode)
             {
@@ -94,6 +95,22 @@ namespace ToolBox.Control
                     break;
             }
         }
+
+        void OnCollisionEnter2D(Collision collision)
+        {
+            IsGrounded = true;
+        }
+
+        void OnCollisionStay(Collision collision)
+        {
+            IsGrounded = true;
+        }
+
+        void OnCollisionExit(Collision collision)
+        {
+            IsGrounded = true;
+        }
+
 
     }
 }
