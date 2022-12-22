@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace ToolBox.Control
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(Collider2D))]
-    public class CharacterController2D : MonoBehaviour
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(Collider))]
+    public class CharacterController : MonoBehaviour
     {
         // Start is called before the first frame update
 
@@ -25,7 +25,7 @@ namespace ToolBox.Control
 
         private Vector3 lastDirection;
 
-        private Rigidbody2D rigidBody;
+        private Rigidbody rigidBody;
 
         //private CharacterController characterController;
 
@@ -55,7 +55,7 @@ namespace ToolBox.Control
 
             lastDirection = Vector3.zero;
             velocity = Vector3.zero;
-            rigidBody = this.GetComponent<Rigidbody2D>();
+            rigidBody = this.GetComponent<Rigidbody>();
             //characterController=this.GetComponent<CharacterController>();
             currentPosition = newPosition = this.transform.position;
 
@@ -82,7 +82,7 @@ namespace ToolBox.Control
 
         private void UpdateRigidBody()
         {
-            switch(mode)
+            switch (mode)
             {
                 case Mode.Velocity:
                     rigidBody.velocity = velocity;
@@ -95,17 +95,17 @@ namespace ToolBox.Control
                     break;
             }
         }
-        void OnCollisionEnter2D(Collision collision)
+        void OnCollisionEnter(Collision collision)
         {
             IsGrounded = true;
         }
 
-        void OnCollisionStay2D(Collision collision)
+        void OnCollisionStay(Collision collision)
         {
             IsGrounded = true;
         }
 
-        void OnCollisionExit2D(Collision collision)
+        void OnCollisionExit(Collision collision)
         {
             IsGrounded = true;
         }
