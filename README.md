@@ -1,2 +1,2 @@
 # Unity-ToolBox
-A set of classes to simplify the use of Unity.
+A set of scripts to simplify the programming in Unity.
