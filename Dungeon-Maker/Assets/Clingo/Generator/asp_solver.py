@@ -2,8 +2,6 @@
 
 import clingo
 
-import json
-
 def to_list(s,regex):
     lis=[]
     for piece in str(s).split(regex):
@@ -41,13 +39,20 @@ def create_door_dict(door):
     door_dict["orientation"]=parts[2]
     return door_dict
 
+def extract_init_room_id(init_room):
+    init_room=init_room.replace("initial_room(","")
+    init_room=init_room.replace(")","")
+    return int(init_room)
+
 def create_model_dict(model):
     model_list=to_list(model," ")
-    size,rooms, doors=divide_list(model_list)
+    size,init_room,rooms, doors=divide_list(model_list)
     model_dict=dict()
     model_dict["rooms"]=[]
     model_dict["doors"]=[]
     size_dict=create_size_dict(size)
+    init=extract_init_room_id(init_room)
+    model_dict["init_door"]=init
     for room in rooms:
         room_dict=create_room_dict(room,size_dict)
         model_dict["rooms"]+=[room_dict]
@@ -58,6 +63,7 @@ def create_model_dict(model):
 
 def divide_list(lis):
     size=None
+    init_room=None
     rooms=[]
     doors=[]
     deltas=[]
@@ -71,7 +77,9 @@ def divide_list(lis):
             doors+=[literal]
         elif (parts[0] == "delta"):
             deltas += [literal]
-    return size, rooms, doors
+        elif(parts[0]=="initial_room"):
+            init_room=literal
+    return size, init_room, rooms, doors
 
 class asp_solver:
 

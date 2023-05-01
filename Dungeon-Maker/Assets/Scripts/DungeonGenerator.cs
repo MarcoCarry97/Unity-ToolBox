@@ -65,10 +65,8 @@ public class DungeonGenerator : MonoBehaviour
     private void GenerateTiles(DungeonData data)
     {
         bool[] visited = new bool[data.Levels[0].Rooms.Count];
-        foreach(RoomData room in data.Levels[0].Rooms)
-        {
-            RecursiveGeneration(data.Levels[0],room, visited);
-        }
+        RoomData initRoom = data.Levels[0].Rooms[data.Levels[0].InitRoom];
+        RecursiveGeneration(data.Levels[0],initRoom,visited);
     }
 
     private void RecursiveGeneration(LevelData level,RoomData room, bool[] visited)
@@ -77,6 +75,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             
             DrawTiles(level, room);
+            visited[room.Id] = true;
             List<DoorData> doors = level.GetDoorsOfRoom(room);
             foreach(DoorData d in doors)
             {
@@ -89,7 +88,7 @@ public class DungeonGenerator : MonoBehaviour
                 print("Door to " + door.End);
                 RecursiveGeneration(level, nextRoom, visited);
             }
-            visited[room.Id] = true;
+            
         }
     }
 

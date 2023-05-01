@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 [Serializable]
 public class LevelData : ScriptableObject
 {
+    [SerializeField]
+    private int init_room;
 
     [SerializeField]
     private List<RoomData> rooms;
@@ -14,20 +16,21 @@ public class LevelData : ScriptableObject
     [SerializeField]
     private List<DoorData> doors;
 
+    public int InitRoom{ get { return init_room; } set { init_room = value; } }
     public List<RoomData> Rooms { get { return rooms; } set { rooms = value; } }
     public List<DoorData> Doors { get { return doors; } set { doors = value; } }
 
     public List<DoorData> GetDoorsOfRoom(RoomData room)
     {
-        List<DoorData> doors=new List<DoorData>();
-        foreach(DoorData door in doors)
+        List<DoorData> nextDoors=new List<DoorData>();
+        foreach(DoorData door in Doors)
         {
-            if(door.Start==room.Id)
+            if(door.Start.Equals(room.Id))
             { 
-                doors.Add(door);
+                nextDoors.Add(door);
             }
         }
-        return doors;
+        return nextDoors;
     }
 
     public RoomData GetRoom(int id)
