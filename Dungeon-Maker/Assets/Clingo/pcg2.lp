@@ -8,7 +8,27 @@
 
 grid(max,max).
 
-size(max_size,max_size).
+axe(horizontal).
+
+axe(vertical).
+
+size(5,3).
+
+size(3,5).
+
+size(3,3).
+
+size(5,5).
+
+size(6,5).
+
+%size(5,6).
+
+%size(6,6).
+
+%size(7,6).
+
+%size(6,7).
 
 %num(0..num_rooms).
 
@@ -29,9 +49,7 @@ delta(east,1,0).
 
 delta(O,X,Y) :- opposite(O,P), delta(P,-X,-Y).
 
-room(R) :- R=0..num_rooms.
-
-
+{room(R)} :- R=0..num_rooms.
 
 
 
@@ -46,13 +64,25 @@ room(R) :- R=0..num_rooms.
 
 
 
+
+%assign size to rooms.
+
+{room_size(R,X,Y)} :- room(R), size(X,Y).
+
+:- room(R), #count{X,Y : room_size(R,X,Y)}!=1.
+
+
+
+
+
+
 %initial & end rooms
 
-initial_room(R) :- room(R), room_square(R,0,0).
+{initial_room(R)} :- room_square(R,_,_).
 
-:-{initial_room(R)}!=1.
+:- {initial_room(R)}!=1.
 
-end_room(E) :- room(E), grid(R,C), room_square(E,R,C).
+{end_room(E)} :- room_square(E,_,_).
 
 :- {end_room(R)}!=1.
 
@@ -65,7 +95,7 @@ end_room(E) :- room(E), grid(R,C), room_square(E,R,C).
 
 %create doors
 
-{door(R1,R2,S)} :- room_square(R1,X1,Y1), room_square(R2,X2,Y2), R1!=R2,
+{door(R1,R2,S)} :-room_square(R1,X1,Y1), room_square(R2,X2,Y2), R1!=R2,
                  delta(S,X2-X1,Y2-Y1).                
 
 door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
@@ -79,7 +109,7 @@ door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
 
 blind_room(R) :- room(R), #count{S : door(R,S,_)}=1.
 
-
+:-{blind_room(R)}!=num_rooms/2.
 
 
 %reachability
@@ -101,7 +131,7 @@ route(R1,R2,N+1) :- room_square(R3,_,_), door(R3,R2,_), N<num_rooms,route(R1,R3,
 
 
 
-#show size/2.
+
 
 #show initial_room/1.
 
@@ -115,6 +145,6 @@ route(R1,R2,N+1) :- room_square(R3,_,_), door(R3,R2,_), N<num_rooms,route(R1,R3,
 
 #show delta/3.
 
-
+#show room_size/3.
 
 

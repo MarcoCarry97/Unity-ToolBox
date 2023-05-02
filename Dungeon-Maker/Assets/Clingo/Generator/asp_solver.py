@@ -8,7 +8,7 @@ def to_list(s,regex):
         lis=lis+[piece]
     return lis
 
-def create_room_dict(room,size):
+def create_room_dict(room,size_list):
     room_dict=dict()
     room=room.replace("room_square(","").replace(")","")
     parts=room.split(",")
@@ -17,17 +17,26 @@ def create_room_dict(room,size):
     center["y"]=int(parts[2])
     room_dict["id"]=int(parts[0])
     room_dict["center"]=center
-    room_dict["size"]=size
+    for size in size_list:
+        if(size["room"]==room_dict["id"]):
+            size_dict=dict()
+            size_dict["x"]=size["x"]
+            size_dict["y"]=size["y"]
+            room_dict["size"]=size_dict
     return room_dict
 
-def create_size_dict(size):
-    size_dict=dict()
-    size=size.replace("size(","")
-    size=size.replace(")","")
-    parts=size.split(",")
-    size_dict["x"]=int(parts[0])
-    size_dict["y"]=int(parts[1])
-    return size_dict
+def create_size_dict(size_list):
+    s_list=[]
+    for size in size_list:
+        size_dict = dict()
+        size = size.replace("room_size(", "")
+        size = size.replace(")", "")
+        parts = size.split(",")
+        size_dict["room"]=int(parts[0])
+        size_dict["x"] = int(parts[1])
+        size_dict["y"] = int(parts[2])
+        s_list+=[size_dict]
+    return s_list
 
 def create_door_dict(door):
     door_dict=dict()
@@ -50,11 +59,11 @@ def create_model_dict(model):
     model_dict=dict()
     model_dict["rooms"]=[]
     model_dict["doors"]=[]
-    size_dict=create_size_dict(size)
+    size_list=create_size_dict(size)
     init=extract_init_room_id(init_room)
     model_dict["init_door"]=init
     for room in rooms:
-        room_dict=create_room_dict(room,size_dict)
+        room_dict=create_room_dict(room,size_list)
         model_dict["rooms"]+=[room_dict]
     for door in doors:
         door_dict=create_door_dict(door)
@@ -62,15 +71,15 @@ def create_model_dict(model):
     return model_dict
 
 def divide_list(lis):
-    size=None
+    size=[]
     init_room=None
     rooms=[]
     doors=[]
     deltas=[]
     for literal in lis:
         parts=literal.split("(")
-        if(parts[0]=="size"):
-            size=literal
+        if(parts[0]=="room_size"):
+            size+=[literal]
         elif(parts[0]=="room_square"):
             rooms+=[literal]
         elif(parts[0]=="door"):

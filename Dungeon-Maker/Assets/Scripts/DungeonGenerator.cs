@@ -14,10 +14,13 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField]
     private TileBase tile;
 
+    Tilemap tilemap;
+
     private Coroutine genCoroutine;
 
     private void Start()
     {
+        tilemap= GameObject.FindObjectOfType<Tilemap>();
         Generate("pcg2.lp", 5);
     }
 
@@ -64,38 +67,68 @@ public class DungeonGenerator : MonoBehaviour
 
     private void GenerateTiles(DungeonData data)
     {
-        bool[] visited = new bool[data.Levels[0].Rooms.Count];
+        List<RoomData> visited = new List<RoomData>();
         RoomData initRoom = data.Levels[0].Rooms[data.Levels[0].InitRoom];
-        RecursiveGeneration(data.Levels[0],initRoom,visited);
+        RecursiveGeneration(data.Levels[0],initRoom,initRoom.Center.X,initRoom.Center.Y,visited);
     }
 
-    private void RecursiveGeneration(LevelData level,RoomData room, bool[] visited)
+    private void RecursiveGeneration(LevelData level,RoomData room, int x, int y, List<RoomData> visited)
     {
-        if (!visited[room.Id])
+        if (!visited.Contains(room))
         {
             
-            DrawTiles(level, room);
-            visited[room.Id] = true;
+            DrawRoomTiles(level, room,x,y);
+            visited.Add(room);
             List<DoorData> doors = level.GetDoorsOfRoom(room);
-            foreach(DoorData d in doors)
-            {
-                print("Next: "+d.End);
-            }
             foreach (DoorData door in doors)
             {
-                print("Next");
+                DrawDoorTiles(x, y, room, door);
+                (int,int) ret=UpdateCoords(level,door);
+                int upX = ret.Item1;
+                int upY =ret.Item2;
                 RoomData nextRoom = level.GetRoom(door.End);
-                print("Door to " + door.End);
-                RecursiveGeneration(level, nextRoom, visited);
+                RecursiveGeneration(level, nextRoom,x+upX,y+upY, visited);
+                
             }
             
         }
     }
 
-    private void DrawTiles(LevelData level,RoomData room)
+    private (int,int) UpdateCoords(LevelData level,DoorData door)
     {
-        Tilemap tilemap=GameObject.FindObjectOfType<Tilemap>();
-        Vector3Int pos = new Vector3Int(room.Center.X, room.Center.Y);
-        tilemap.SetTile(pos, tile);
+        RoomData r1= level.GetRoom(door.Start);
+        RoomData r2 = level.GetRoom(door.End);
+        (int,int) muls=door.GetOrientationValues();
+        int mulX=muls.Item1, mulY=muls.Item2;
+        int addendX = (1+(r1.Size.X + r2.Size.X)/2)*mulX;
+        int addendY = (1+(r1.Size.Y + r2.Size.Y)/2)*mulY;
+        return (addendX,addendY);
+    }
+
+    private void DrawRoomTiles(LevelData level,RoomData room,int x, int y)
+    {
+        int sizeX = room.Size.X/2;
+        int sizeY = room.Size.Y/2;
+        for(int i=-sizeX;i<=sizeX;i++)
+            for(int j=-sizeY;j<=sizeY;j++)
+            {
+                Vector3Int pos=new Vector3Int(x+i,y+j);
+                //Vector3Int pos=new Vector3Int(room.Center.X,room.Center.Y);
+                tilemap.SetTile(pos, tile);
+            }
+        List<DoorData> doors = level.GetDoorsOfRoom(room);
+        foreach(DoorData door in doors)
+        {
+            DrawDoorTiles(x,y,room,door);
+        }
+    }
+
+    private void DrawDoorTiles(int x,int y,RoomData room,DoorData door)
+    {
+        (int,int) doorVals=door.GetOrientationValues();
+        int doorX=x+(1+room.Size.X/2)*doorVals.Item1;
+        int doorY=y+(1+room.Size.Y/2)*doorVals.Item2;
+        Vector3Int pos=new Vector3Int(doorX,doorY);
+        tilemap.SetTile(pos,tile);
     }
 }
