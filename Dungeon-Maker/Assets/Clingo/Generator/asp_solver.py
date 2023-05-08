@@ -10,7 +10,7 @@ def to_list(s,regex):
 
 def create_room_dict(room,size_list):
     room_dict=dict()
-    room=room.replace("room_square(","").replace(")","")
+    room=room.replace("place_center(","").replace(")","")
     parts=room.split(",")
     center=dict()
     center["x"]=int(parts[1])
@@ -29,7 +29,7 @@ def create_size_dict(size_list):
     s_list=[]
     for size in size_list:
         size_dict = dict()
-        size = size.replace("room_size(", "")
+        size = size.replace("place_size(", "")
         size = size.replace(")", "")
         parts = size.split(",")
         size_dict["room"]=int(parts[0])
@@ -61,7 +61,7 @@ def create_model_dict(model):
     model_dict["doors"]=[]
     size_list=create_size_dict(size)
     init=extract_init_room_id(init_room)
-    model_dict["init_door"]=init
+    model_dict["init_room"]=init
     for room in rooms:
         room_dict=create_room_dict(room,size_list)
         model_dict["rooms"]+=[room_dict]
@@ -78,9 +78,9 @@ def divide_list(lis):
     deltas=[]
     for literal in lis:
         parts=literal.split("(")
-        if(parts[0]=="room_size"):
+        if(parts[0]=="place_size"):
             size+=[literal]
-        elif(parts[0]=="room_square"):
+        elif(parts[0]=="place_center"):
             rooms+=[literal]
         elif(parts[0]=="door"):
             doors+=[literal]

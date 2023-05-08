@@ -15,9 +15,16 @@ def on_model(model):
 def random_samples(l,num_samples):
     res=[]
     for i in range(0,num_samples):
-        num=int(random.random())%len(l)
+        num=random.randint(0,len(l))
         res+=[l[num]]
     return res
+
+def are_equals(lis):
+    res=True
+    for i in range(0,len(lis)-1):
+        if(lis[i]!=lis[i+1]):
+            res=False
+    print(res)
 
 def main():
     if(len(sys.argv)<2):
@@ -33,7 +40,6 @@ def main():
     dictio["status"]=solver.status
     dictio["levels"]=res
     sys.stdout.write(json.dumps(dictio))
-
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

@@ -18,10 +18,28 @@ public class DungeonGenerator : MonoBehaviour
 
     private Coroutine genCoroutine;
 
+    private DungeonData dungeon;
+
+    private int dungeonIndex;
+
+    public bool Next { get; set; }
+
     private void Start()
     {
         tilemap= GameObject.FindObjectOfType<Tilemap>();
-        Generate("pcg2.lp", 5);
+        Next = false;
+        dungeonIndex= 0;
+        Generate("gen_room.lp", 5);
+    }
+
+    private void Update()
+    {
+        if(Next)
+        {
+            tilemap.ClearAllTiles();
+            GenerateTiles(dungeon, dungeonIndex);
+            dungeonIndex = (dungeonIndex + 1) % dungeon.Levels.Count;
+        }
     }
 
     private void Generate(string fileName, int numSamples)
@@ -42,7 +60,7 @@ public class DungeonGenerator : MonoBehaviour
             StartInfo = new ProcessStartInfo
             {
                 FileName = "python",
-                //Arguments= "C:\\Users\\marco\\Desktop\\pcg.lp 2 --verbose=0 --outf=2",
+                //Arguments= "C:\\Users\\marco\\Desktop\\gen_room.lp 2 --verbose=0 --outf=2",
                 Arguments = args,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -57,26 +75,29 @@ public class DungeonGenerator : MonoBehaviour
             string piece = process.StandardOutput.ReadLine();
             res += piece;
         }
-
-        DungeonData data = JsonConvert.DeserializeObject<DungeonData>(res);
-
-        GenerateTiles(data);
-
+        print(res);
+        dungeon = JsonConvert.DeserializeObject<DungeonData>(res);
+        print(dungeon);
+        Next = true;
 
     }
 
-    private void GenerateTiles(DungeonData data)
+    private void GenerateTiles(DungeonData data,int index)
     {
         List<RoomData> visited = new List<RoomData>();
-        RoomData initRoom = data.Levels[0].Rooms[data.Levels[0].InitRoom];
-        RecursiveGeneration(data.Levels[0],initRoom,initRoom.Center.X,initRoom.Center.Y,visited);
+        LevelData level = data.Levels[index];
+        RoomData initRoom = level.GetRoom(level.Init_Room);
+        int x = initRoom.Center.X;
+        int y = initRoom.Center.Y;
+        RecursiveGeneration(level,initRoom,x,y,visited);
+        Next= false;
     }
 
     private void RecursiveGeneration(LevelData level,RoomData room, int x, int y, List<RoomData> visited)
     {
         if (!visited.Contains(room))
         {
-            
+            print("Generating " + room.Id);
             DrawRoomTiles(level, room,x,y);
             visited.Add(room);
             List<DoorData> doors = level.GetDoorsOfRoom(room);
@@ -90,6 +111,7 @@ public class DungeonGenerator : MonoBehaviour
                 RecursiveGeneration(level, nextRoom,x+upX,y+upY, visited);
                 
             }
+
             
         }
     }
@@ -109,11 +131,14 @@ public class DungeonGenerator : MonoBehaviour
     {
         int sizeX = room.Size.X/2;
         int sizeY = room.Size.Y/2;
+        //Vector3Int pos = new Vector3Int(x, y);
+        //tilemap.SetTile(pos, tile);
         for(int i=-sizeX;i<=sizeX;i++)
             for(int j=-sizeY;j<=sizeY;j++)
             {
                 Vector3Int pos=new Vector3Int(x+i,y+j);
                 //Vector3Int pos=new Vector3Int(room.Center.X,room.Center.Y);
+                
                 tilemap.SetTile(pos, tile);
             }
         List<DoorData> doors = level.GetDoorsOfRoom(room);

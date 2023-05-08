@@ -16,7 +16,7 @@ public class LevelData : ScriptableObject
     [SerializeField]
     private List<DoorData> doors;
 
-    public int InitRoom{ get { return init_room; } set { init_room = value; } }
+    public int Init_Room{ get { return init_room; } set { init_room = value; } }
     public List<RoomData> Rooms { get { return rooms; } set { rooms = value; } }
     public List<DoorData> Doors { get { return doors; } set { doors = value; } }
 
