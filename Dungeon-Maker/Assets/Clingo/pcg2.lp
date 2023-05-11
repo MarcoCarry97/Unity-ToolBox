@@ -154,7 +154,8 @@ route(R1,R2,N+1) :- room_center(R3,_,_), door(R3,R2,_), N<num_rooms,route(R1,R3,
 
 
 
-
+place_center(P,X,Y) :- room_center(P,X,Y).
+place_size(P,X,Y) :- room_size(P,X,Y).
 
 
 
@@ -164,13 +165,13 @@ route(R1,R2,N+1) :- room_center(R3,_,_), door(R3,R2,_), N<num_rooms,route(R1,R3,
 
 #show blind_room/1.
 
-#show room_center/3.
+#show place_center/3.
 
 #show door/3.
 
 #show delta/3.
 
-#show room_size/3.
+#show place_size/3.
 
 %#show stairs/3.
 

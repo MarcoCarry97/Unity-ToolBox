@@ -29,7 +29,7 @@ public class DungeonGenerator : MonoBehaviour
         tilemap= GameObject.FindObjectOfType<Tilemap>();
         Next = false;
         dungeonIndex= 0;
-        Generate("gen_room.lp", 5);
+        Generate("pcg2.lp", 5);
     }
 
     private void Update()

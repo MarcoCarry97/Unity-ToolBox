@@ -1,32 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public abstract class GenerativePipelinePhase : ScriptableObject
 {
+    [SerializeField]
+    protected string program;
 
     [SerializeField]
-    private string fileName;
+    protected string fileName;
 
-    private ClingoProcess process;
+    protected bool finished = false;
 
-    public string Output { get; private set; }
+    protected ClingoProcess process;
 
-    protected abstract string doComputation(string input);
+    protected string output;
 
-    public bool IsFinished()
-    {
-        return !process.IsFinished();
+    public string Output { 
+        get
+        {
+            return output;
+        }
+        set
+        {
+            output = value;
+        }
     }
 
-    public void Compute(string input)
+    public IEnumerator IsFinished()
     {
-        Output = doComputation(input);
+        return new WaitUntil(()=>finished);
     }
+
+    public abstract IEnumerator Compute(string input);
 
     public bool IsOutputAvailable()
     {
-        return Output!= null;
+        return output!= null;
     }
 
 

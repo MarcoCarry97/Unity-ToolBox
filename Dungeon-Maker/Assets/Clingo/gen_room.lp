@@ -87,11 +87,14 @@ place_center(P,X,Y) :- corr_center(P,X,Y).
 place_size(P,X,Y) :- room_size(P,X,Y).
 place_size(P,X,Y) :- corr_size(P,X,Y).
 
+:-place_center(P,X,Y), place_center(Q,X,Y), P!=Q.
+
+
 %#show room/1.
 %#show corridor/1.
 
-%#show room_center/3.
-%#show room_size/3.
+#show room_center/3.
+#show room_size/3.
 
 %#show corr_center/3.
 
@@ -136,6 +139,8 @@ door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
 
 
 
+
+
 {initial_room(R)} :- place_center(R,_,_), room(R).
 
 :-{initial_room(R)}!=1.
@@ -154,6 +159,8 @@ door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
 
 path(P1,P2,1) :- door(P1,P2,_).
 
+path(P1,P2,N) :- path(P2,P1,N).
+
 path(P1,P2,N):- place_center(P3,_,_), door(P1,P3,_), num(N), path(P3,P2,N-1).
 
 
@@ -161,11 +168,7 @@ path(P1,P2,N):- place_center(P3,_,_), door(P1,P3,_), num(N), path(P3,P2,N-1).
 
 :-initial_room(I), end_room(E), not path(I,E,_).
 
-:-initial_room(I), blind_room(E), not path(I,E,_).
-
-
-
-
+:-place_center(I,_,_), place_center(E,_,_), not path(I,E,_).
 
 
 #show door/3.
@@ -173,3 +176,45 @@ path(P1,P2,N):- place_center(P3,_,_), door(P1,P3,_), num(N), path(P3,P2,N-1).
 #show initial_room/1.
 #show end_room/1.
 #show blind_room/1.
+
+
+
+
+
+
+%PART THREE
+
+#const num_trap=5.
+
+trap(0..(num_trap-1)).
+
+
+
+{trap_pos(T,R,X,Y)} :- trap(T), room_center(R,XC,YC), room_size(R,XS,YS),
+                     num(X), num(Y),
+                     H=XS/2, V=YS/2, X>=XC-H, X<=XC+H,
+                     Y>=YC-V, Y<=YC+V.
+
+:- room(R),room_size(R,XS,YS), #count{T,X,Y : trap_pos(T,R,X,Y)}!=XS.
+
+
+
+stairs(R,X,Y) :- end_room(R), room_center(R,X,Y).
+
+:- trap_pos(T,R,X,Y), stairs(R,X,Y).
+
+
+#show trap_pos/4.
+
+#show stairs/3.
+
+
+
+
+
+
+
+
+
+
+

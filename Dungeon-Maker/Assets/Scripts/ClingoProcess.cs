@@ -1,23 +1,28 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Windows;
 
 public class ClingoProcess
 {
-    private Process process;
+    private Process process=new Process();
 
     public string Output { get; private set; }
 
     public ClingoProcess() { }
 
-    public void Start(string program, string fileName, string input, int numOfSamples=1)
+    public IEnumerator Start(string program, string fileName, string input, int numOfSamples=1)
     {
-        string args = string.Format("{0}/Clingo/{1} {2} {3}", Application.dataPath, fileName,input, numOfSamples);
+        if (!input.Equals("")) input += ".";
+        string args = string.Format("{0}/Clingo/{1} [{2}] {3}", Application.dataPath, fileName, input, numOfSamples);
         string filePath = string.Format("{0}/Clingo/Generator/{1}", Application.dataPath, program);
         args = $"{filePath} {args}";
-        Process process = new Process
+        UnityEngine.Debug.Log(args);
+        process = new Process
         {
 
             StartInfo = new ProcessStartInfo
@@ -30,9 +35,19 @@ public class ClingoProcess
             }
         };
         process.Start();
-        while (!process.HasExited);
+        yield return new WaitUntil(() => process.HasExited);
         Output = process.StandardOutput.ReadToEnd();
-        process.Kill();
+        UnityEngine.Debug.Log("Process output: " + Output);
+    }
+
+    private void tbody(object obj)
+    {
+        Tuple<string, string, string, int> data = obj as Tuple<string, string,string, int>;
+        string program=data.Item1;
+        string fileName=data.Item2;
+        string input=data.Item3;
+        int numOfSamples = data.Item4;
+       
     }
 
     public void WaitForExit()
@@ -47,7 +62,11 @@ public class ClingoProcess
 
     public bool IsFinished()
     {
-        return process.HasExited;
+        bool end = false;
+        if (process == null)
+            end = true;
+        else end = process.HasExited;
+        return end;
     }
 
 

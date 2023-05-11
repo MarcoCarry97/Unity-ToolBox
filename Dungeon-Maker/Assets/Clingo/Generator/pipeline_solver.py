@@ -20,4 +20,5 @@ class pipeline_solver:
         res=""
         for model in handle:
             res+=str(model)
+            break
         return res
