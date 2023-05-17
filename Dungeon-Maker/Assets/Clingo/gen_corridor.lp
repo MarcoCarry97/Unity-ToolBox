@@ -2,83 +2,71 @@
 
 %variables
 
-#const len_grid_x=50.
+#const num_rooms=7.
 
-#const len_grid_y=50.
+#const max=num_rooms*2.
 
-#const num_rooms=35.
+#const min_size=3.
 
-grid(len_grid_x,len_grid_y).
+#const max_size=3.
 
-num(0..((len_grid_x+len_grid_y)/2-1)).
-
-center(X,Y) :- num(X), num(Y).
-
-size(1,1).
-
-orientation(north).
-orientation(south).
-orientation(east).
-orientation(west).
-
-opposite(north,south).
-opposite(east,west).
-opposite(X,Y) :- opposite(Y,X).
-
-delta(north,0,1).
-delta(east,1,0).
-delta(O,X,Y) :- opposite(O,P), delta(P,-X,-Y).
+#const distance=5.
 
 
 
-%rooms
 
-{room(R)} :- num(R), R<=num_rooms.
 
-:- {room(R)} !=num_rooms.
+%PART TWO
 
 
 
 
 
 
-
-
-%assign centers to rooms.
-
-{room_center(R,X,Y)} :- room(R), center(X,Y).
-
-:- room(R), #count{X,Y : room_center(R,X,Y)}!=1.
-
-:- room_center(R,X,Y), room_center(S,X,Y), R!=S.
-
-
-
-
-
-%assign size to rooms.
-
-{room_size(R,X,Y)} :- room(R), size(X,Y).
-
-:- room(R), #count{X,Y : room_size(R,X,Y)}!=1.
-
-
-
-
-%assigning doors.
-
-{door(R1,R2,S)} :- room_center(R1,X1,Y1), room_center(R2,X2,Y2), R1!=R2,
-                 delta(S,X2-X1,Y2-Y1).                
+{door(P1,P2,O)} :- place_center(P1,X1,Y1), place_center(P2,X2,Y2),
+                 delta(O,X2-X1,Y2-Y1).
 
 door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
 
-:- room(R), #count{S : door(R,S,_)}<1.
+:- place_center(P,_,_), #count{Q,O : door(P,Q,O)}<1.
+
+:- place_center(P,_,_), #count{Q,O : door(P,Q,O)}>4.
+
+:-{door(R1,R2,O)}<max.
+
+:-corridor(C), #count{R,O : door(C,R,O)}<2.
 
 
 
 
 
-%#show room_center/3.
-#show room_size/3.
+{initial_room(R)} :- place_center(R,_,_), room(R).
 
-%HERE I APPEND THE RESULTS OF THE PREVIOUS PHASE.
+:-{initial_room(R)}!=1.
+
+{end_room(R)} :- place_center(R,_,_),room(R).
+
+:-{end_room(R)}!=1.
+
+{blind_room(R)} :- place_center(R,_,_), room(R), {door(R,_,_)}=1.
+
+:-{blind_room(R)}!=num_rooms/2.
+
+
+
+
+
+path(P1,P2,1) :- door(P1,P2,_).
+
+path(P1,P2,N) :- path(P2,P1,N).
+
+path(P1,P2,N):- place_center(P3,_,_), door(P1,P3,_), num(N), path(P3,P2,N-1).
+
+
+:-initial_room(R), end_room(R).
+
+:-initial_room(I), end_room(E), not path(I,E,_).
+
+:-place_center(I,_,_), place_center(E,_,_), not path(I,E,_).
+
+

@@ -10,7 +10,7 @@ class pipeline_solver:
     def solve(self, filename, input, num_iter=1):
         models=[]
         file=open(filename,"r")
-        program=input+"\n"+file.read()
+        program=input+file.read()
         num=num_iter*100
         control=clingo.Control(arguments=["--model="+str(num)])
         control.add("base",[], program)

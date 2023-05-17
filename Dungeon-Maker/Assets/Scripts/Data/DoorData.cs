@@ -18,17 +18,17 @@ public class DoorData : ScriptableObject
     public int End { get { return end; } set { end = value; } }
     public string Orientation { get { return orientation; } set { orientation = value; } }
 
-    public (int, int) GetOrientationValues()
+    public (int, int) GetOrientationValues(int distance)
     {
         int x = 0, y = 0;
         if (orientation.Equals("east"))
-            x = 1;
+            x = distance;
         else if (orientation.Equals("west"))
-            x = -1;
+            x = -distance;
         else if (orientation.Equals("south"))
-            y = -1;
+            y = -distance;
         else if (orientation.Equals("north"))
-            y = 1;
+            y = distance;
         return (x, y);
     }
 

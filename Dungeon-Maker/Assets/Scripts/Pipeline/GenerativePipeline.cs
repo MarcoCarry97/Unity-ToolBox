@@ -5,6 +5,7 @@ using System.Threading;
 using UnityEngine.Tilemaps;
 using Unity.VisualScripting;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class GenerativePipeline : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class GenerativePipeline : MonoBehaviour
     [SerializeField]
     [Range(5,10)]
     private int distanceBetweenRooms;
+
+    private int distance;
 
     public string Output
     {
@@ -104,6 +107,7 @@ public class GenerativePipeline : MonoBehaviour
 
     private void GenerateTiles(DungeonData data, int index)
     {
+        distance = GetMaxRoomSize(data, index)*2;
         List<RoomData> visited = new List<RoomData>();
         LevelData level = data.Levels[index];
         RoomData initRoom = level.GetRoom(level.Init_Room);
@@ -114,72 +118,70 @@ public class GenerativePipeline : MonoBehaviour
         buildCoroutine = null;
     }
 
+    private int GetMaxRoomSize(DungeonData data, int index)
+    {
+        LevelData level = data.Levels[index];
+        int distance = Mathf.Max(level.Rooms[0].Size.X, level.Rooms[0].Size.Y);
+        foreach(RoomData room in level.Rooms)
+        {
+            int max=Mathf.Max(room.Size.X,room.Size.Y);
+            if (max > distance)
+                distance = max;
+        }
+        return distance;
+    }
+
     private void RecursiveGeneration(LevelData level, RoomData room, int x, int y, List<RoomData> visited)
     {
         if (!visited.Contains(room))
         {
-            print("Generating " + room.Id);
-            DrawRoomTiles(level, room, x, y);
+            print("Room: " + room.Id);
             visited.Add(room);
-            List<DoorData> doors = level.GetDoorsOfRoom(room);
-            foreach (DoorData door in doors)
+            DrawRoomTiles(room);
+            foreach(DoorData door in level.GetDoorsOfRoom(room))
             {
-                DrawDoorTiles(x, y, room, door);
-                (int, int) ret = UpdateCoords(level, door);
-                int upX = ret.Item1*distanceBetweenRooms;
-                int upY = ret.Item2*distanceBetweenRooms;
-                RoomData nextRoom = level.GetRoom(door.End);
-                RecursiveGeneration(level, nextRoom, x + upX, y + upY, visited);
-
+                DrawCorridorTiles(level,door);
+                (int, int) up = door.GetOrientationValues(distance);
+                print(up);
+                int upX = up.Item1;
+                int upY = up.Item2;
+                RoomData dest = level.GetRoom(door.End);
+                RecursiveGeneration(level, dest, x + upX, y + upY, visited);
             }
-
-
         }
     }
 
-    private (int, int) UpdateCoords(LevelData level, DoorData door)
+    private void DrawRoomTiles(RoomData room)
     {
-        RoomData r1 = level.GetRoom(door.Start);
-        RoomData r2 = level.GetRoom(door.End);
-        (int, int) muls = door.GetOrientationValues();
-        int mulX = muls.Item1, mulY = muls.Item2;
-        int addendX = (1 + (r1.Size.X + r2.Size.X) / 2) * mulX;
-        int addendY = (1 + (r1.Size.Y + r2.Size.Y) / 2) * mulY;
-        return (addendX, addendY);
-    }
-
-    private void DrawRoomTiles(LevelData level, RoomData room, int x, int y)
-    {
-        int sizeX = room.Size.X / 2;
-        int sizeY = room.Size.Y / 2;
-        //Vector3Int pos = new Vector3Int(x, y);
-        //tilemap.SetTile(pos, tile);
-        for (int i = -sizeX; i <= sizeX; i++)
-            for (int j = -sizeY; j <= sizeY; j++)
+        int halfSizeX = room.Size.X / 2;
+        int halfSizeY = room.Size.Y / 2;
+        for(int i=-halfSizeX;i<=halfSizeX;i++)
+            for(int j = -halfSizeY; j <= halfSizeY; j++)
             {
-                Vector3Int pos = new Vector3Int(x + i, y + j);
-                //Vector3Int pos=new Vector3Int(room.Center.X,room.Center.Y);
-
+                int x = room.Center.X + i;
+                int y = room.Center.Y + j;
+                Vector3Int pos = new Vector3Int(x,y);
                 tilemap.SetTile(pos, tile);
             }
-        Vector3Int center = new Vector3Int(x,y);
-        tilemap.SetTile(center, centerTile);
-        /*List<DoorData> doors = level.GetDoorsOfRoom(room);
-        foreach (DoorData door in doors)
-        {
-            DrawDoorTiles(x, y, room, door);
-        }*/
     }
 
-    private void DrawDoorTiles(int x, int y, RoomData room, DoorData door)
+    private void DrawCorridorTiles(LevelData level,DoorData door)
     {
-        (int, int) doorVals = door.GetOrientationValues();
-        for(int i=0;i<distanceBetweenRooms*2;i++)
-        {
-            int doorX = x + (i + room.Size.X / 2) * doorVals.Item1;
-            int doorY = y + (i + room.Size.Y / 2) * doorVals.Item2;
-            Vector3Int pos = new Vector3Int(doorX, doorY);
-            tilemap.SetTile(pos, tile);
-        }
+        RoomData start=level.GetRoom(door.Start);
+        RoomData end=level.GetRoom(door.End);
+        (int,int) values=door.GetOrientationValues(distance);
+        int increment=(end.Center.X - start.Center.X + end.Center.Y -start.Center.Y)/5;
+        if (door.Orientation.Equals("north") || door.Orientation.Equals("south"))
+            for (int i = start.Center.Y; i != end.Center.Y; i += increment)
+                AddTile(tile, start.Center.X, i);
+        else for (int i = start.Center.X; i != end.Center.X; i += increment)
+            AddTile(tile, i, start.Center.Y);
     }
+   
+    private void AddTile(Tile tile,int x, int y)
+    {
+        Vector3Int pos = new Vector3Int(x,y);
+        tilemap.SetTile(pos, tile);
+    }
+
 }

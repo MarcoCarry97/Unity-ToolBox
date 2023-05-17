@@ -6,19 +6,45 @@
 
 #const max=num_rooms*2.
 
-#const min_size=5.
+#const min_size=3.
 
-#const max_size=5.
+#const max_size=3.
+
+#const distance=5.
+
+
+
+
+
+
+orientation(north).
+orientation(south).
+orientation(east).
+orientation(west).
+
+opposite(north,south).
+opposite(west,east).
+opposite(X,Y) :- opposite(Y,X).
+
+delta(north,0,distance).
+delta(east,distance,0).
+delta(O,X,Y) :- opposite(O,P), delta(P,-X,-Y).
+
+
 
 grid(max,max).
 
 num(0..max).
 
-center(X,Y) :- num(X), num(Y).
+pos((0..max)*distance).
+
+center(X,Y) :- pos(X), pos(Y).
 
 size(X,Y) :- num(X), num(Y), X>=min_size, X<=max_size, Y>=min_size, Y<=max_size.
 
 size(1,1).
+
+
 
 
 
@@ -90,36 +116,6 @@ place_size(P,X,Y) :- corr_size(P,X,Y).
 :-place_center(P,X,Y), place_center(Q,X,Y), P!=Q.
 
 
-%#show room/1.
-%#show corridor/1.
-
-#show room_center/3.
-#show room_size/3.
-
-%#show corr_center/3.
-
-#show place_center/3.
-#show place_size/3.
-
-
-
-
-%PART TWO
-
-
-orientation(north).
-orientation(south).
-orientation(east).
-orientation(west).
-
-opposite(north,south).
-opposite(west,east).
-opposite(X,Y) :- opposite(Y,X).
-
-delta(north,0,1).
-delta(east,1,0).
-delta(O,X,Y) :- opposite(O,P), delta(P,-X,-Y).
-
 
 
 
@@ -171,13 +167,6 @@ path(P1,P2,N):- place_center(P3,_,_), door(P1,P3,_), num(N), path(P3,P2,N-1).
 :-place_center(I,_,_), place_center(E,_,_), not path(I,E,_).
 
 
-#show door/3.
-
-#show initial_room/1.
-#show end_room/1.
-#show blind_room/1.
-
-
 
 
 
@@ -204,9 +193,26 @@ stairs(R,X,Y) :- end_room(R), room_center(R,X,Y).
 :- trap_pos(T,R,X,Y), stairs(R,X,Y).
 
 
-#show trap_pos/4.
 
-#show stairs/3.
+
+
+#show place_center/3.
+#show place_size/3.
+#show opposite/2.
+#show delta/3.
+#show room_center/3.
+#show room_size/3.
+#show num/1.
+#show room/1.
+#show initial_room/1.
+#show end_room/1.
+#show corridor/1.
+
+
+
+
+
+
 
 
 

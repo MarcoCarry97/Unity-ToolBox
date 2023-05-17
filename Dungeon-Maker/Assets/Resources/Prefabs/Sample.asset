@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7f5f51bd997d9447b911e2b72dab579, type: 3}
   m_Name: Sample
   m_EditorClassIdentifier: 
-  program: main.py
+  program: pipeline_main.py
   fileName: gen_room.lp
+  genRoom: gen_room.lp
+  genCorridor: gen_corridor.lp
+  genDecoration: gen_decoration.lp

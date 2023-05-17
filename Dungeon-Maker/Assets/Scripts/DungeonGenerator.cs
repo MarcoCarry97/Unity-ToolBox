@@ -120,7 +120,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         RoomData r1= level.GetRoom(door.Start);
         RoomData r2 = level.GetRoom(door.End);
-        (int,int) muls=door.GetOrientationValues();
+        (int,int) muls=door.GetOrientationValues(5);
         int mulX=muls.Item1, mulY=muls.Item2;
         int addendX = (1+(r1.Size.X + r2.Size.X)/2)*mulX;
         int addendY = (1+(r1.Size.Y + r2.Size.Y)/2)*mulY;
@@ -150,7 +150,7 @@ public class DungeonGenerator : MonoBehaviour
 
     private void DrawDoorTiles(int x,int y,RoomData room,DoorData door)
     {
-        (int,int) doorVals=door.GetOrientationValues();
+        (int,int) doorVals=door.GetOrientationValues(5);
         int doorX=x+(1+room.Size.X/2)*doorVals.Item1;
         int doorY=y+(1+room.Size.Y/2)*doorVals.Item2;
         Vector3Int pos=new Vector3Int(doorX,doorY);
