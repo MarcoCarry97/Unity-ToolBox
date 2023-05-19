@@ -28,6 +28,12 @@ public class GenerativePipeline : MonoBehaviour
 
     private int distance;
 
+    private List<DungeonData> dungeons;
+
+    private int current = -1;
+
+    public bool Next { get; set; }
+
     public string Output
     {
         get
@@ -56,21 +62,12 @@ public class GenerativePipeline : MonoBehaviour
         while(!end)
         {
             string input = "";
-            if(index>0)
-            {
-                yield return new WaitUntil(() => phases[index-1].IsOutputAvailable());
-                var s=phases[index - 1].Output;
-                //input = phases[index - 1].Output;
-            }
             yield return StartCoroutine(phase.Compute(input));
-            if(index<phases.Count-1)
-                yield return phases[index+1].IsFinished();
-            else
-            {
-                yield return new WaitUntil(() => phase.Output!=null);
-                output= phase.Output;
-                phase.Output = null;
-            }
+            yield return new WaitUntil(() => phase.Output!=null);
+            output= phase.Output;
+            DungeonData dungeon = JsonConvert.DeserializeObject<DungeonData>(output);
+            dungeons.Add(dungeon);
+            phase.Output = null;
         }
         
     }
@@ -78,6 +75,7 @@ public class GenerativePipeline : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        dungeons = new List<DungeonData>();
         tilemap = GameObject.FindObjectOfType<Tilemap>();
         if (phases.Count!=0)
         {
@@ -90,7 +88,7 @@ public class GenerativePipeline : MonoBehaviour
     {
         print("Update");
         string model = output;
-        if(model!=null && buildCoroutine==null)
+        if(model!=null && buildCoroutine==null && Next)
         {
             print("Create dungeon");
             buildCoroutine = StartCoroutine(BuildDungeon(model));
@@ -100,7 +98,10 @@ public class GenerativePipeline : MonoBehaviour
 
     private IEnumerator BuildDungeon(string model)
     {
-        DungeonData dungeon=JsonConvert.DeserializeObject<DungeonData>(model);
+        
+        
+        current = (current + 1) % dungeons.Count;
+        DungeonData dungeon = dungeons[current];
         GenerateTiles(dungeon,0);
         yield return null;
     }

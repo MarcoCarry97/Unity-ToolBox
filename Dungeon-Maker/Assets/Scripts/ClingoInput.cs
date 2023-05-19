@@ -14,7 +14,7 @@ public class ClingoInput : MonoBehaviour
     void Update()
     {
         GameObject game = GameObject.Find("Clingo");
-        DungeonGenerator generator = this.GetComponent<DungeonGenerator>();
+        GenerativePipeline generator = this.GetComponent<GenerativePipeline>();
         generator.Next = Input.GetButtonDown("Jump");
     }
 }
