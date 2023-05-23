@@ -120,11 +120,13 @@ def main():
     file_list=[gen_room,gen_corridor,gen_decoration]
     res=None
     for file_name in file_list:
+        print("Input: "+str(input))
         input=to_asp_format(input)
         if(input!=""):
             input+="."
         solver=pp.pipeline_solver()
         res=solver.solve(file_name,input,num_iter=1)
+        print("Result: "+str(res))
         input=res
     #print("Input: "+input)
     dungeon=dict()

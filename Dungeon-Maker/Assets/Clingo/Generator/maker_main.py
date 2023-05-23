@@ -36,7 +36,8 @@ def main():
     dungeon=dict()
     dungeon["status"]=solver.status
     dungeon["levels"]=res
-    sys.stdout.write(json.dumps(dungeon))
+    json_str=json.dumps(dungeon)
+    sys.stdout.write(json_str)
 
 if __name__ == '__main__':
     main()

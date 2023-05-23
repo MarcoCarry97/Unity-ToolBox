@@ -8,6 +8,11 @@ public static class ProcessExtensions
 {
     public static string ReadStandardOutput(this Process process)
     {
-        return process.StandardOutput.ReadToEnd();
+        string res = "";
+        while(!process.StandardOutput.EndOfStream)
+        {
+            res += process.StandardOutput.ReadLine();
+        }
+        return res;
     }
 }

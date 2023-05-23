@@ -2,8 +2,11 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.VisualScripting;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class DungeonMaker : MonoBehaviour
 {
@@ -28,7 +31,10 @@ public class DungeonMaker : MonoBehaviour
     private int maxPathLength;
 
     [SerializeField]
-    private bool useRandomizedInitialPosition;
+    private bool randomStart;
+
+    [SerializeField]
+    private string execName;
 
     [SerializeField]
     private string roomFile;
@@ -39,7 +45,12 @@ public class DungeonMaker : MonoBehaviour
     [SerializeField]
     private string decorationFile;
 
-    private List<DungeonData> dungeons;
+    public DungeonData Dungeon { get; private set; }
+
+    private Tilemap tilemap;
+
+    [SerializeField]
+    private Tile tile;
 
     public IEnumerator Generate()
     {
@@ -49,20 +60,106 @@ public class DungeonMaker : MonoBehaviour
         process.StartInfo.Arguments = args;
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.CreateNoWindow= true;
+        process.StartInfo.RedirectStandardOutput = true;
         process.Start();
-        yield return new WaitUntil(() => process.HasExited);
+        yield return new WaitUntil(() => !process.HasExited);
         string result = process.ReadStandardOutput();
-        dungeons.Add(JsonConvert.DeserializeObject<DungeonData>(result));
+        DungeonData dungeon = JsonConvert.DeserializeObject<DungeonData>(result);
+        print(dungeon.ToString());
+        Dungeon = dungeon;
+        Build(0);
     }
 
     public string GetArgs()
     {
-        string genRooms = $"{Application.dataPath}/Clingo/{roomFile}.lp";
-        string genCorridors = $"{Application.dataPath}/Clingo/{corridorFile}.lp";
-        string genDecorations = $"{Application.dataPath}/Clingo/{decorationFile}.lp";
-        string res=$"--room_file {genRooms} --corr_file {genCorridors} --dec_file {genDecorations} --levels {numLevels} --rooms {numRooms} --size {maxRoomSize} --path {maxPathLength} --distance {distanceBetweenRooms}";
-        res += useRandomizedInitialPosition ? "--rand_init" : "";
+        string execPath = $"{Application.dataPath}/Clingo/Generator/{execName}";
+        string genRooms = $"{Application.dataPath}/Clingo/{roomFile}";
+        string genCorridors = $"{Application.dataPath}/Clingo/{corridorFile}";
+        string genDecorations = $"{Application.dataPath}/Clingo/{decorationFile}";
+        string res=$"{execPath} --room_file {genRooms} --corr_file {genCorridors} --dec_file {genDecorations} --levels {numLevels} --rooms {numRooms} --size {maxRoomSize} --path {maxPathLength} --distance {distanceBetweenRooms}";
+        res += randomStart ? "--rand_init" : "";
         return res;
     }
 
+    public void Build(int index)
+    {
+        tilemap.ClearAllTiles();
+        List<RoomData> visited = new List<RoomData>();
+        LevelData level = Dungeon.Levels[index];
+        RoomData initRoom = level.GetRoom(level.Init_Room);
+        int x = initRoom.Center.X;
+        int y = initRoom.Center.Y;
+        RecursiveBuild(level, initRoom, x, y, visited);
+    }
+
+    private void Start()
+    {
+        tilemap=GameObject.FindAnyObjectByType<Tilemap>();
+    }
+
+    private int GetMaxRoomSize(DungeonData data, int index)
+    {
+        LevelData level = data.Levels[index];
+        int distance = Mathf.Max(level.Rooms[0].Size.X, level.Rooms[0].Size.Y);
+        foreach (RoomData room in level.Rooms)
+        {
+            int max = Mathf.Max(room.Size.X, room.Size.Y);
+            if (max > distance)
+                distance = max;
+        }
+        return distance;
+    }
+
+    private void RecursiveBuild(LevelData level, RoomData room, int x, int y, List<RoomData> visited)
+    {
+        if (!visited.Contains(room))
+        {
+            print("Room: " + room.Id);
+            visited.Add(room);
+            DrawRoomTiles(room);
+            foreach (DoorData door in level.GetDoorsOfRoom(room))
+            {
+                DrawCorridorTiles(level, door);
+                (int, int) up = door.GetOrientationValues(5);
+                print(up);
+                int upX = up.Item1;
+                int upY = up.Item2;
+                RoomData dest = level.GetRoom(door.End);
+                RecursiveBuild(level, dest, x + upX, y + upY, visited);
+            }
+        }
+    }
+
+    private void DrawRoomTiles(RoomData room)
+    {
+        int halfSizeX = room.Size.X / 2;
+        int halfSizeY = room.Size.Y / 2;
+        for (int i = -halfSizeX; i <= halfSizeX; i++)
+            for (int j = -halfSizeY; j <= halfSizeY; j++)
+            {
+                int x = room.Center.X + i;
+                int y = room.Center.Y + j;
+                Vector3Int pos = new Vector3Int(x, y);
+                tilemap.SetTile(pos, tile);
+            }
+    }
+
+    private void DrawCorridorTiles(LevelData level, DoorData door)
+    {
+        RoomData start = level.GetRoom(door.Start);
+        RoomData end = level.GetRoom(door.End);
+        (int, int) values = door.GetOrientationValues(5);
+        int increment = (end.Center.X - start.Center.X + end.Center.Y - start.Center.Y) / 5;
+        if (door.Orientation.Equals("north") || door.Orientation.Equals("south"))
+            for (int i = start.Center.Y; i != end.Center.Y; i += increment)
+                AddTile(tile, start.Center.X, i);
+        else for (int i = start.Center.X; i != end.Center.X; i += increment)
+                AddTile(tile, i, start.Center.Y);
+    }
+
+    private void AddTile(Tile tile, int x, int y)
+    {
+        Vector3Int pos = new Vector3Int(x, y);
+        tilemap.SetTile(pos, tile);
+    }
 }

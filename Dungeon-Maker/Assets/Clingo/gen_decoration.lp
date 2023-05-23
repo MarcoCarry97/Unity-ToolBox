@@ -22,8 +22,6 @@
 
 
 
-
-
 %PART THREE
 
 #const num_trap=5.

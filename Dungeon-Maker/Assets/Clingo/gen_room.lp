@@ -202,10 +202,10 @@ stairs(R,X,Y) :- end_room(R), room_center(R,X,Y).
 #show delta/3.
 #show room_center/3.
 #show room_size/3.
+#show corr_center/3.
+#show corr_size/3.
 #show num/1.
 #show room/1.
-#show initial_room/1.
-#show end_room/1.
 #show corridor/1.
 
 
