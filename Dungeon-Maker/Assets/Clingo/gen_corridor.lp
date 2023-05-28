@@ -36,7 +36,7 @@ door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
 
 :-{door(R1,R2,O)}<max.
 
-:-corridor(C), #count{R,O : door(C,R,O)}<2.
+%:-corridor(C), #count{R,O : door(C,R,O)}<2.
 
 
 

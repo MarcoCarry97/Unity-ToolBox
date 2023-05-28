@@ -9,9 +9,6 @@ def get_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         )
-    parser.add_argument("--room_file","-rf",type=str,default="")
-    parser.add_argument("--corr_file","-cf",type=str,default="")
-    parser.add_argument("--dec_file","-df",type=str,default="")
     parser.add_argument("--rooms","-r",type=int,default=3)
     parser.add_argument("--size","-s",type=int,default=3)
     parser.add_argument("--distance","-d",type=int,default=5)
@@ -27,12 +24,9 @@ def main():
     distance=args.distance
     max_path=args.path
     size=args.size
-    room_file=args.room_file
-    corr_file=args.corr_file
-    dec_file=args.dec_file
     rand_init=args.rand_init
     solver=ms.maker_solver()
-    res=solver.solve(room_file,corr_file,dec_file,num_levels,num_rooms,size,distance,max_path,rand_init)
+    res=solver.solve(num_levels,num_rooms,size,distance,max_path,rand_init)
     dungeon=dict()
     dungeon["status"]=solver.status
     dungeon["levels"]=res
