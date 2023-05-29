@@ -17,22 +17,22 @@
 
 
 
-%PART NINE: STAIRS
+%PART SEVEN: ITEMS 
 
-{stairs(R,X,Y)} :- end_room(R), room_center(R,XC,YC), room_size(R,XS,YS),
+item(0..(num_item-1)).
+
+{item_pos(T,R,X,Y)} :- item(T), room_center(R,XC,YC), room_size(R,XS,YS),
                      num(X), num(Y),
                      H=XS/2, V=YS/2, X>=XC-H, X<=XC+H,
                      Y>=YC-V, Y<=YC+V.
 
-:-{stairs(R,X,Y)}!=1.
+:- room(R),room_size(R,XS,YS), #count{T,X,Y : item_pos(T,R,X,Y)}!=XS.
 
-%:-stairs(R,X,Y), trap_pos(T,R,X,Y).
 
-%-stairs(R,X,Y), treasure_pos(T,R,X,Y).
 
-%:-stairs(R,X,Y), item_pos(T,R,X,Y).
 
-%:-stairs(R,X,Y), key_pos(T,R,X,Y).
+
+
 
 
 

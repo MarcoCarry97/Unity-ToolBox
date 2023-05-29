@@ -1,15 +1,9 @@
 
 %problem instance
 
-#const num_rooms=3.
-
-#const distance=9.
-
 #const max=num_rooms*2.
 
 #const min_size=3.
-
-#const max_size=3.
 
 #const num_trap=5.
 

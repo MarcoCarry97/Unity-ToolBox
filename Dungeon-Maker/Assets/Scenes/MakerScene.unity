@@ -466,15 +466,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numLevels: 5
-  numRooms: 1
-  maxRoomSize: 3
-  distanceBetweenRooms: 1
-  maxPathLength: 1
-  randomStart: 0
-  execName: maker_main.py
-  roomFile: gen_room.lp
-  corridorFile: gen_corridor.lp
-  decorationFile: gen_decoration.lp
+  numRooms: 10
+  maxRoomSize: 5
+  distanceBetweenRooms: 5
+  maxPathLength: 5
+  randomStart: 1
   tile: {fileID: 11400000, guid: 2310ce13012c17343949c267b9b9e558, type: 2}
 --- !u!4 &812372173
 Transform:

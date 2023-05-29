@@ -5,6 +5,8 @@ import sys
 
 import maker_solver as ms
 
+import os
+
 def get_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -31,6 +33,7 @@ def main():
     dungeon["status"]=solver.status
     dungeon["levels"]=res
     json_str=json.dumps(dungeon)
+    
     sys.stdout.write(json_str)
 
 if __name__ == '__main__':

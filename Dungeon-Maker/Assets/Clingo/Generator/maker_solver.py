@@ -17,7 +17,6 @@ def random_formula(num,length):
     multiplier2 = random.randrange(0, length)
     addend2 = random.randrange(0, length)
     num = (num + (1 + addend1) * multiplier1 + (1 + addend2) * multiplier2 + 1) % length
-    num = int(math.exp(num))%length
     rand_exp=random.randrange(0, length)
     num= (num+num**rand_exp)%length
     return num
@@ -123,10 +122,14 @@ def divide_list(lis):
 
 def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,rand_init):
     input=to_asp_format(input)
-    print("Input: "+input)
     file = open(filename)
     program = input+file.read()
-    control = clingo.Control(arguments=["--model="+str(num_levels*100)])
+    args=["--model="+str(num_levels*100),
+          "-c num_rooms="+str(num_rooms),
+          "-c max_size="+str(size),
+          "-c max_path="+str(path),
+          "-c distance="+str(distance)]
+    control = clingo.Control(arguments=args)
     control.add("base", [], program)
     control.ground([("base", [])])
     handle=control.solve(yield_=True)
@@ -147,7 +150,7 @@ class maker_solver:
 
     def solve(self, num_levels, num_rooms, size, distance,path,rand_init):
         create_points="create_points.lp"
-        files=["create_rooms.lp","assign_size.lp","add_traps.lp", "add_treasures.lp", "add_items.lp", "initial_end.lp","add_stairs.lp"]
+        files=["create_rooms.lp","assign_size.lp","add_pos.lp","add_traps.lp", "add_treasures.lp","add_keys.lp", "add_items.lp", "initial_end.lp","add_stairs.lp"]
         incomplete_models,status=single_model_solving("",create_points,num_levels,num_rooms,size,distance,path,rand_init)
         results=[]
         for incomplete_model in incomplete_models:

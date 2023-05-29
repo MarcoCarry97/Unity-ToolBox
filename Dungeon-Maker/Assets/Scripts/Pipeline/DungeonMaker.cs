@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class DungeonMaker : MonoBehaviour
 {
-    [Range(1,100)]
+    [Range(2,100)]
     [SerializeField]
     private int numLevels;
 
@@ -33,18 +34,6 @@ public class DungeonMaker : MonoBehaviour
     [SerializeField]
     private bool randomStart;
 
-    [SerializeField]
-    private string execName;
-
-    [SerializeField]
-    private string roomFile;
-
-    [SerializeField]
-    private string corridorFile;
-
-    [SerializeField]
-    private string decorationFile;
-
     public DungeonData Dungeon { get; private set; }
 
     private Tilemap tilemap;
@@ -54,30 +43,39 @@ public class DungeonMaker : MonoBehaviour
 
     public IEnumerator Generate()
     {
-        string args = GetArgs();
-        Process process = new Process();
-        process.StartInfo.FileName = "python";
-        process.StartInfo.Arguments = args;
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.CreateNoWindow= true;
-        process.StartInfo.RedirectStandardOutput = true;
+        Process process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "python",
+                Arguments = GetArgs(),
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                WorkingDirectory = $"{Application.dataPath}/Clingo/Generator"
+            }
+        };
         process.Start();
         yield return new WaitUntil(() => !process.HasExited);
         string result = process.ReadStandardOutput();
+        string error = process.ReadStandardError();
+        UnityEngine.Debug.LogError(error);
+        print("Exit Code: "+process.ExitCode);
+        print("Result: " + result);
         DungeonData dungeon = JsonConvert.DeserializeObject<DungeonData>(result);
         print(dungeon.ToString());
         Dungeon = dungeon;
         Build(0);
+        
     }
 
     public string GetArgs()
     {
-        string execPath = $"{Application.dataPath}/Clingo/Generator/{execName}";
-        string genRooms = $"{Application.dataPath}/Clingo/{roomFile}";
-        string genCorridors = $"{Application.dataPath}/Clingo/{corridorFile}";
-        string genDecorations = $"{Application.dataPath}/Clingo/{decorationFile}";
-        string res=$"{execPath} --room_file {genRooms} --corr_file {genCorridors} --dec_file {genDecorations} --levels {numLevels} --rooms {numRooms} --size {maxRoomSize} --path {maxPathLength} --distance {distanceBetweenRooms}";
-        res += randomStart ? "--rand_init" : "";
+        string execPath = $"{Application.dataPath}/Clingo/Generator/maker_main.py";
+        string res=$"{execPath} --levels={numLevels} --rooms={numRooms} --size={maxRoomSize} --path={maxPathLength} --distance={distanceBetweenRooms}";
+        res += randomStart ? " --rand_init" : "";
+        print(res);
         return res;
     }
 

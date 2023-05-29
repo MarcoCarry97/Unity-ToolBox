@@ -15,4 +15,14 @@ public static class ProcessExtensions
         }
         return res;
     }
+
+    public static string ReadStandardError(this Process process)
+    {
+        string res = "";
+        while (!process.StandardError.EndOfStream)
+        {
+            res += process.StandardError.ReadLine();
+        }
+        return res;
+    }
 }

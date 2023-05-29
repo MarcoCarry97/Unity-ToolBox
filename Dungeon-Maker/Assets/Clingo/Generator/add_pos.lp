@@ -17,25 +17,11 @@
 
 
 
+pos(0,0).
 
+pos(X,Y) :- size(A,B), X=(-A/2)..(A/2), Y=(-B/2)..(B/2).
 
-%PART EIGHT: INITIAL ROOM & END ROOM
-
-{initial_room(R)} :- room(R), room_center(R,X,Y).
-
-{end_room(R)} :- room(R).
-
-:- {initial_room(R)}!=1.
-
-:- {end_room(R)}!=1.
-
-
-
-
-
-
-
-
+room_pos(R,X,Y) :- room(R), pos(X,Y).
 
 
 

@@ -17,16 +17,14 @@
 
 
 
-
 %PART THREE: DIMENSIONS.
 
 size(X,Y) :- X=min_size..max_size, Y=min_size..max_size.
 
-{room_size(R,X,Y)} :- room(R), size(X,Y).
+room_size(R,X,Y) :- room(R), size(X,Y).
 
 :-room(R), #count{X,Y : room_size(R,X,Y)}!=1.
 
-:-{room_size(R,X,Y)}!=num_rooms.
 
 
 corr_size(C,1,1) :- corridor(C).
