@@ -465,11 +465,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 741f50bfb8627a74eaaa2603989f8ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numLevels: 5
-  numRooms: 10
-  maxRoomSize: 5
-  distanceBetweenRooms: 5
-  maxPathLength: 5
+  numLevels: 7
+  numRooms: 7
+  maxRoomSize: 7
+  distanceBetweenRooms: 10
+  maxPathLength: 7
   randomStart: 1
   tile: {fileID: 11400000, guid: 2310ce13012c17343949c267b9b9e558, type: 2}
 --- !u!4 &812372173

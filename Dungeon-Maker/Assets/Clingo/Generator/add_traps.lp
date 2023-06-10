@@ -34,3 +34,4 @@ trap(0..(num_trap-1)).
 :- room(R), #count{T,X,Y : trap_pos(T,R,X,Y)}!=num_trap.
 
 
+

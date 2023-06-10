@@ -21,14 +21,11 @@
 
 %PART EIGHT: INITIAL ROOM & END ROOM
 
-{initial_room(R)} :- room(R), room_center(R,X,Y).
+1 {initial_room(0..(num_rooms-1))} 1.
 
-{end_room(R)} :- room(R).
+1 {end_room(0..(num_rooms-1))} 1.
 
-:- {initial_room(R)}!=1.
-
-:- {end_room(R)}!=1.
-
+:-initial_room(R), end_room(R).
 
 
 

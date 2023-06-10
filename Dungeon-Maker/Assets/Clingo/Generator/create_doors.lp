@@ -34,7 +34,7 @@ door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
 
 :-side(O), place_center(P,_,_), #count{Q : door(Q,P,O)}>1.
 
-:-corridor(C), #count{R,O : door(C,R,O)}<2.
+%:-corridor(C), #count{R,O : door(C,R,O)}<2.
 
 
 
@@ -47,4 +47,6 @@ path(P1,P2,N) :- place_center(P3,_,_), door(P1,P3,_), N<=max, path(P3,P2,N-1).
 
 :-place_center(I,_,_), place_center(E,_,_), not path(I,E,_).
 
+%:- room(R1), room(R2), path(R1,R2,N), N<max_path/2.
 
+%:- room(R1), room(R2), path(R1,R2,N), N>max_path.

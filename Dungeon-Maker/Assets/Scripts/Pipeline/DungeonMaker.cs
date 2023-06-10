@@ -146,8 +146,8 @@ public class DungeonMaker : MonoBehaviour
     {
         RoomData start = level.GetRoom(door.Start);
         RoomData end = level.GetRoom(door.End);
-        (int, int) values = door.GetOrientationValues(5);
-        int increment = (end.Center.X - start.Center.X + end.Center.Y - start.Center.Y) / 5;
+        (int, int) values = door.GetOrientationValues(distanceBetweenRooms);
+        int increment = (end.Center.X - start.Center.X + end.Center.Y - start.Center.Y) / distanceBetweenRooms;
         if (door.Orientation.Equals("north") || door.Orientation.Equals("south"))
             for (int i = start.Center.Y; i != end.Center.Y; i += increment)
                 AddTile(tile, start.Center.X, i);

@@ -20,14 +20,9 @@
 
 %PART THREE: DIMENSIONS.
 
-size(X,Y) :- X=min_size..max_size, Y=min_size..max_size.
+size(min_size..max_size,min_size..max_size).
 
-{room_size(R,X,Y)} :- room(R), size(X,Y).
-
-:-room(R), #count{X,Y : room_size(R,X,Y)}!=1.
-
-:-{room_size(R,X,Y)}!=num_rooms.
-
+{room_size(R,min_size..max_size,min_size..max_size)}=1 :- room(R).
 
 corr_size(C,1,1) :- corridor(C).
 
@@ -42,4 +37,8 @@ place_size(P,X,Y) :- corr_size(P,X,Y).
 
 
 
+pos(0,0).
 
+pos(X,Y) :- size(A,B), X=(-A/2)..(A/2), Y=(-B/2)..(B/2).
+
+room_pos(R,X,Y) :- room(R), pos(X,Y).
