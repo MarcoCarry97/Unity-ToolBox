@@ -5,11 +5,7 @@
 
 #const min_size=3.
 
-#const num_trap=5.
 
-#const num_treasure=5.
-
-#const num_item=5.
 
 #const init_pos_x=0.
 
@@ -23,9 +19,9 @@ key(0..(num_treasure-1)).
 
 {key_pos(T,R,X,Y)} :- key(T), room_pos(R,X,Y).
 
-:- key_pos(T1,R,X,Y), key_pos(T2,R,X,Y),T1!=T2.
+decoration(D,R,X,Y) :- key_pos(D,R,X,Y).
 
-:- room(R), #count{T,X,Y : key_pos(T,R,X,Y)}!=num_treasure.
+:-decoration(D1,R,X,Y), decoration(D2,R,X,Y), D1!=D2.
 
 
 

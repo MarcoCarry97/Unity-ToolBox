@@ -131,6 +131,35 @@ def create_door_dict(door):
     door_dict["orientation"]=parts[2]
     return door_dict
 
+def create_decoration_dict(dec_list, type):
+    res=[]
+    for dec in dec_list:
+        dec=dec.replace(type+"_pos(","")
+        dec=dec.replace(")","")
+        parts=dec.split(",")
+        dec_dict=dict()
+        dec_dict["type"]=type
+        dec_dict["index"]=int(parts[0])
+        dec_dict["room"]=int(parts[1])
+        pos_dict=dict()
+        pos_dict["x"]=int(parts[2])
+        pos_dict["y"]=int(parts[3])
+        dec_dict["position"]=pos_dict
+        res+=[dec_dict]
+    return res
+
+def create_stairs_dict(stairs):
+    stairs_dict=dict()
+    stairs=stairs.replace("stairs(","")
+    stairs=stairs.replace(")","")
+    parts=stairs.split(",")
+    pos_dict = dict()
+    pos_dict["x"] = int(parts[1])
+    pos_dict["y"] = int(parts[2])
+    stairs_dict["room"]=int(parts[0])
+    stairs_dict["position"]=pos_dict
+    return stairs_dict
+
 def extract_init_room_id(init_room):
     init_room=init_room.replace("initial_room(","")
     init_room=init_room.replace(")","")
@@ -138,13 +167,18 @@ def extract_init_room_id(init_room):
 
 def create_model_dict(model):
     model_list=to_list(model," ")
-    size,init_room,rooms, doors=divide_list(model_list)
+    size,init_room,rooms, doors, traps, treasures,keys, items, stairs=divide_list(model_list)
     model_dict=dict()
     model_dict["rooms"]=[]
     model_dict["doors"]=[]
     size_list=create_size_dict(size)
     init=extract_init_room_id(init_room)
     model_dict["init_room"]=init
+    model_dict["decorations"]=create_decoration_dict(traps,"trap")
+    model_dict["decorations"]+=create_decoration_dict(treasures,"treasure")
+    model_dict["decorations"]+=create_decoration_dict(keys,"key")
+    model_dict["decorations"]+=create_decoration_dict(items,"item")
+    model_dict["stairs"]=create_stairs_dict(stairs)
     for room in rooms:
         room_dict=create_room_dict(room,size_list)
         model_dict["rooms"]+=[room_dict]
@@ -159,6 +193,11 @@ def divide_list(lis):
     rooms=[]
     doors=[]
     deltas=[]
+    traps=[]
+    treasures=[]
+    items=[]
+    stairs=None
+    keys=[]
     for literal in lis:
         parts=literal.split("(")
         if(parts[0]=="place_size"):
@@ -171,17 +210,30 @@ def divide_list(lis):
             deltas += [literal]
         elif(parts[0]=="initial_room"):
             init_room=literal
-    return size, init_room, rooms, doors
+        elif (parts[0] == "trap_pos"):
+            traps+= [literal]
+        elif (parts[0] == "treasure_pos"):
+            treasures+= [literal]
+        elif (parts[0] == "key_pos"):
+            keys+= [literal]
+        elif (parts[0] == "item_pos"):
+            items = [literal]
+        elif (parts[0] == "stairs"):
+            stairs = literal
+    return size, init_room, rooms, doors,traps,treasures, keys,items,stairs
 
-def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,rand_init, previous=None):
+def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init, previous=None):
     input=to_asp_format(input)
     file = open(filename)
     program = input+file.read()
-    args=["--model="+str(num_levels*100),
+    args=["--model="+str(num_levels*space),
           "-c num_rooms="+str(num_rooms),
           "-c max_size="+str(size),
           "-c max_path="+str(path),
-          "-c distance="+str(distance)]
+          "-c distance="+str(distance),
+          "-c num_trap="+str(num_trap),
+          "-c num_treasure="+str(num_treasure),
+          "-c num_item="+str(num_item),]
     control = clingo.Control(arguments=args)
     control.add("base", [], program)
     control.ground([("base", [])])
@@ -205,14 +257,14 @@ class maker_solver:
     def __init__(self):
         self.status="UNKNOWN"
 
-    def solve(self, num_levels, num_rooms, size, distance,path,rand_init):
+    def solve(self, num_levels, num_rooms, size, distance,path,space,num_trap,num_treasure,num_item,rand_init):
         create_points="create_points.lp"
         files=["create_rooms.lp","create_doors.lp","assign_size.lp","add_traps.lp", "add_treasures.lp","add_keys.lp", "add_items.lp", "initial_end.lp","add_stairs.lp"]
         incomplete_model=None
         incomplete_models=[]
         for i in range(0,num_levels):
             incomplete_model, status, _ = single_model_solving("", create_points, 1, num_rooms, size,
-                                                                distance, path, rand_init,previous=incomplete_models)
+                                                                distance, path,space,num_trap, num_treasure, num_item, rand_init,previous=incomplete_models)
             incomplete_models+=[incomplete_model]
         results=[]
         previous=None
@@ -221,7 +273,8 @@ class maker_solver:
             previous=None
             for file in files:
                 #print(file)
-                input, status, _= single_model_solving(input, file, 1, num_rooms, size, distance, path,rand_init, previous=previous)
+                #print(input)
+                input, status, _ = single_model_solving(input, file, 1, num_rooms, size, distance, path,space, num_trap, num_treasure, num_item,rand_init, previous=previous)
             previous=input
             results+=[create_model_dict(input)]
         self.status = str(status)

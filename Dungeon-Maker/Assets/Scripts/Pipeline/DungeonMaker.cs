@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class DungeonMaker : MonoBehaviour
@@ -31,15 +32,43 @@ public class DungeonMaker : MonoBehaviour
     [SerializeField]
     private int maxPathLength;
 
+    [Range(0, 10)]
+    [SerializeField]
+    private int numTreasures;
+
+    [Range(1, 1000)]
+    [SerializeField]
+    private int spaceSize;
+    
+    [Range(0,10)]
+    [SerializeField]
+    private int numTraps;
+
+    [Range(0, 10)]
+    [SerializeField]
+    private int numItems;
+
     [SerializeField]
     private bool randomStart;
 
     public DungeonData Dungeon { get; private set; }
 
-    private Tilemap tilemap;
+    private World tilemap;
 
     [SerializeField]
     private Tile tile;
+
+    [SerializeField]
+    private Tile trapTile;
+
+    [SerializeField]
+    private Tile stairsTile;
+
+    [SerializeField]
+    private Tile treasurePrefab;
+
+    [SerializeField]
+    private Tile keyPrefab;
 
     public IEnumerator Generate()
     {
@@ -73,7 +102,16 @@ public class DungeonMaker : MonoBehaviour
     public string GetArgs()
     {
         string execPath = $"{Application.dataPath}/Clingo/Generator/maker_main.py";
-        string res=$"{execPath} --levels={numLevels} --rooms={numRooms} --size={maxRoomSize} --path={maxPathLength} --distance={distanceBetweenRooms}";
+        string res=$"{execPath} " +
+            $"--levels={numLevels} " +
+            $"--rooms={numRooms} " +
+            $"--size={maxRoomSize} " +
+            $"--path={maxPathLength} " +
+            $"--distance={distanceBetweenRooms} " +
+            $"--space={spaceSize} " +
+            $"--num_trap={numTraps} " +
+            $"--num_treasure={numTreasures} " +
+            $"--num_item={numItems}";
         res += randomStart ? " --rand_init" : "";
         print(res);
         return res;
@@ -92,7 +130,7 @@ public class DungeonMaker : MonoBehaviour
 
     private void Start()
     {
-        tilemap=GameObject.FindAnyObjectByType<Tilemap>();
+        tilemap=GameObject.FindAnyObjectByType<World>();
     }
 
     private int GetMaxRoomSize(DungeonData data, int index)
@@ -114,7 +152,7 @@ public class DungeonMaker : MonoBehaviour
         {
             print("Room: " + room.Id);
             visited.Add(room);
-            DrawRoomTiles(room);
+            DrawRoomTiles(room,level);
             foreach (DoorData door in level.GetDoorsOfRoom(room))
             {
                 DrawCorridorTiles(level, door);
@@ -128,7 +166,7 @@ public class DungeonMaker : MonoBehaviour
         }
     }
 
-    private void DrawRoomTiles(RoomData room)
+    private void DrawRoomTiles(RoomData room, LevelData level)
     {
         int halfSizeX = room.Size.X / 2;
         int halfSizeY = room.Size.Y / 2;
@@ -138,8 +176,27 @@ public class DungeonMaker : MonoBehaviour
                 int x = room.Center.X + i;
                 int y = room.Center.Y + j;
                 Vector3Int pos = new Vector3Int(x, y);
-                tilemap.SetTile(pos, tile);
+                tilemap.SetTile(pos, tile,0);
             }
+        DrawDecorations(room, level);
+    }
+
+    private void DrawDecorations(RoomData room, LevelData level)
+    {
+        foreach(DecorationData dec in level.GetDecorationsOfRoom(room))
+        {
+            int x = dec.Position.X + room.Center.X - room.Size.X / 2;
+            int y = dec.Position.Y + room.Center.Y - room.Size.Y / 2;
+            Vector3Int pos=new Vector3Int(x,y);
+            string type = dec.Type;
+            Tile typeTile;
+            if (type.Equals("trap"))
+                typeTile = trapTile;
+            else if (type.Equals("treasure"))
+                typeTile = treasurePrefab;
+            else typeTile = keyPrefab;
+            tilemap.SetTile(pos, typeTile, 1);
+        }
     }
 
     private void DrawCorridorTiles(LevelData level, DoorData door)
@@ -158,6 +215,6 @@ public class DungeonMaker : MonoBehaviour
     private void AddTile(Tile tile, int x, int y)
     {
         Vector3Int pos = new Vector3Int(x, y);
-        tilemap.SetTile(pos, tile);
+        tilemap.SetTile(pos, tile,0);
     }
 }

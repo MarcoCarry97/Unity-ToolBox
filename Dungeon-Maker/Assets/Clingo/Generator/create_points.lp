@@ -5,11 +5,7 @@
 
 #const min_size=3.
 
-#const num_trap=5.
 
-#const num_treasure=5.
-
-#const num_item=5.
 
 #const init_pos_x=0.
 

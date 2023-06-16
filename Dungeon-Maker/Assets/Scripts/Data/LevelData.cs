@@ -16,9 +16,14 @@ public class LevelData : ScriptableObject
     [SerializeField]
     private List<DoorData> doors;
 
+    [SerializeField]
+    private List<DecorationData> decorations;
+
     public int Init_Room{ get { return init_room; } set { init_room = value; } }
     public List<RoomData> Rooms { get { return rooms; } set { rooms = value; } }
     public List<DoorData> Doors { get { return doors; } set { doors = value; } }
+
+    public List<DecorationData> Decorations { get { return decorations; } set { decorations = value; } }
 
     public List<DoorData> GetDoorsOfRoom(RoomData room)
     {
@@ -42,6 +47,18 @@ public class LevelData : ScriptableObject
         }
         return null;
 
+
+    }
+
+    public List<DecorationData> GetDecorationsOfRoom(RoomData room)
+    {
+        List<DecorationData> decs=new List<DecorationData>();
+        foreach(DecorationData data in decorations)
+        {
+            if(data.Room.Equals(room.Id))
+                decs.Add(data);
+        }
+        return decs;
     }
 
     public override string ToString()

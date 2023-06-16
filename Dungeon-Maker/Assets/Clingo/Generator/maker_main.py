@@ -15,8 +15,12 @@ def get_parser():
     parser.add_argument("--size","-s",type=int,default=3)
     parser.add_argument("--distance","-d",type=int,default=5)
     parser.add_argument("--levels","-l",type=int,default=1)
-    parser.add_argument("--path","-p",type=int,default=2)
-    parser.add_argument("--rand_init", "-i", action="store_true")
+    parser.add_argument("--path","-p",type=int,default=1)
+    parser.add_argument("--space", "-a", type=int, default=1)
+    parser.add_argument("--num_trap", "-t", type=int, default=1)
+    parser.add_argument("--num_treasure", "-c", type=int, default=1)
+    parser.add_argument("--num_item", "-i", type=int, default=1)
+    parser.add_argument("--rand_init", "-b", action="store_true")
     return parser
 def main():
     parser=get_parser()
@@ -26,9 +30,13 @@ def main():
     distance=args.distance
     max_path=args.path
     size=args.size
+    space=args.space
+    num_trap=args.num_trap
+    num_treasure=args.num_treasure
+    num_item=args.num_item
     rand_init=args.rand_init
     solver=ms.maker_solver()
-    res=solver.solve(num_levels,num_rooms,size,distance,max_path,rand_init)
+    res=solver.solve(num_levels,num_rooms,size,distance,max_path,space,num_trap,num_treasure,num_item,rand_init)
     dungeon=dict()
     dungeon["status"]=solver.status
     dungeon["levels"]=res

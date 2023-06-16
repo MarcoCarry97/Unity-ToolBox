@@ -5,11 +5,7 @@
 
 #const min_size=3.
 
-#const num_trap=5.
 
-#const num_treasure=5.
-
-#const num_item=5.
 
 #const init_pos_x=0.
 
@@ -36,9 +32,10 @@ place_size(P,X,Y) :- corr_size(P,X,Y).
 
 
 
+pos(0..A-1,0..B-1) :- room_size(R,A,B).
 
-pos(0,0).
 
-pos(X,Y) :- size(A,B), X=(-A/2)..(A/2), Y=(-B/2)..(B/2).
 
-room_pos(R,X,Y) :- room(R), pos(X,Y).
+room_pos(R,X,Y) :- room_size(R,A,B), pos(X,Y).
+
+%not room_pos(R,X,Y) :- room(R),X=0; room(R),Y=0.

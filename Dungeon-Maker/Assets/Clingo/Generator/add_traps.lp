@@ -5,11 +5,7 @@
 
 #const min_size=3.
 
-#const num_trap=5.
 
-#const num_treasure=5.
-
-#const num_item=5.
 
 #const init_pos_x=0.
 
@@ -27,11 +23,15 @@
 
 trap(0..(num_trap-1)).
 
-{trap_pos(T,R,X,Y)} :- trap(T), room_pos(R,X,Y).
+{trap_pos(T,R,X,Y)} :- trap(T), room_size(R,XS,YS), room_pos(R,X,Y), X<XS, Y<YS.
 
-:- trap_pos(T1,R,X,Y), trap_pos(T2,R,X,Y),T1!=T2.
+not trap_pos(T,R,X,Y) :- trap(T), room_size(R,A,B), room_pos(R,X,Y), X=A/2.
 
-:- room(R), #count{T,X,Y : trap_pos(T,R,X,Y)}!=num_trap.
+not trap_pos(T,R,X,Y) :- trap(T), room_size(R,A,B), room_pos(R,X,Y), Y=B/2.
 
+:- room_size(R,XS,YS),{trap_pos(T,R,X,Y)}!=XS.
 
+decoration(D,R,X,Y) :- trap_pos(D,R,X,Y).
+
+:-decoration(D1,R,X,Y), decoration(D2,R,X,Y), D1!=D2.
 
