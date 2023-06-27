@@ -17,8 +17,7 @@
 
 %PART FOUR: DOORS & PATHS
 
-{door(P1,P2,O)} :- place_center(P1,X1,Y1), place_center(P2,X2,Y2),
-                 delta(O,X2-X1,Y2-Y1).
+{door(P1,P2,O)} :- place_center(P1,X1,Y1), place_center(P2,X2,Y2), delta(O,X2-X1,Y2-Y1).
 
 door(R1,R2,S) :- opposite(S,T), door(R2,R1,T).
 

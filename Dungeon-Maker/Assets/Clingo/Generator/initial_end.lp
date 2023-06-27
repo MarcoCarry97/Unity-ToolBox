@@ -21,8 +21,13 @@
 
 1 {end_room(0..(num_rooms-1))} 1.
 
+%initial_room(@rand(0,num_rooms)).
+
+%end_room(@rand(0,num_rooms)).
+
 :-initial_room(R), end_room(R).
 
+%:- initial_room(I), end_room(E), path_length(L), not path(I,E,L).
 
 
 

@@ -21,13 +21,13 @@
 
 :-stairs(R,X,Y), decoration(D,R,X,Y).
 
-:-stairs(R,X,Y), decoration(D,R,X+1,Y).
+%:-stairs(R,X,Y), decoration(D,R,X+1,Y).
 
-:-stairs(R,X,Y), decoration(D,R,X-1,Y).
+%:-stairs(R,X,Y), decoration(D,R,X-1,Y).
 
-:-stairs(R,X,Y), decoration(D,R,X,Y+1).
+%:-stairs(R,X,Y), decoration(D,R,X,Y+1).
 
-:-stairs(R,X,Y), decoration(D,R,X,Y-1).
+%:-stairs(R,X,Y), decoration(D,R,X,Y-1).
 %:-stairs(R,X,Y), trap_pos(T,R,X,Y).
 
 %-stairs(R,X,Y), treasure_pos(T,R,X,Y).

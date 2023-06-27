@@ -31,6 +31,8 @@ not trap_pos(T,R,X,Y) :- trap(T), room_size(R,A,B), room_pos(R,X,Y), Y=B/2.
 
 :- room_size(R,XS,YS),{trap_pos(T,R,X,Y)}!=XS.
 
+%:- S=#sum{XS,YS,RS : room_size(RS,XS,YS)}, {trap_pos(T,R,X,Y)}!=@rand(S/2,S).
+
 decoration(D,R,X,Y) :- trap_pos(D,R,X,Y).
 
 :-decoration(D1,R,X,Y), decoration(D2,R,X,Y), D1!=D2.

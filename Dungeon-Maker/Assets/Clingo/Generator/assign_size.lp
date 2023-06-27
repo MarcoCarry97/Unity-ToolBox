@@ -18,7 +18,15 @@
 
 size(min_size..max_size,min_size..max_size).
 
-{room_size(R,min_size..max_size,min_size..max_size)}=1 :- room(R).
+%{room_size(R,min_size..max_size,min_size..max_size)}=1 :- room(R).
+
+%{room_size(R,@rand(min_size,max_size),@rand(min_size,max_size))} :- room(R).
+
+{room_size(R,X,Y)} :- room(R), size(X,Y).
+
+:-{room_size(R,X,Y)}!=num_rooms.
+
+:- room(R), #count{X,Y : room_size(R,X,Y)}!=1.
 
 corr_size(C,1,1) :- corridor(C).
 

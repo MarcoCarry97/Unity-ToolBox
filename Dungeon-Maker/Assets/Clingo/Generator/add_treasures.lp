@@ -13,7 +13,6 @@
 
 
 
-
 blind_room(R) :- room(R), #count{S : door(R,S,_)}=1.
 
 
