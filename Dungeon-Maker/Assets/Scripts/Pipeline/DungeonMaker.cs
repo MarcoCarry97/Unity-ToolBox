@@ -24,6 +24,10 @@ public class DungeonMaker : MonoBehaviour
     [SerializeField]
     private int maxRoomSize;
 
+    [Range(1, 5)]
+    [SerializeField]
+    private int corridorSize;
+
     [Range(1,10)]
     [SerializeField]
     private int distanceBetweenRooms;
@@ -56,7 +60,7 @@ public class DungeonMaker : MonoBehaviour
     private World tilemap;
 
     [SerializeField]
-    private Tile tile;
+    private RuleTile tile;
 
     [SerializeField]
     private Tile trapTile;
@@ -111,7 +115,8 @@ public class DungeonMaker : MonoBehaviour
             $"--space={spaceSize} " +
             $"--num_trap={numTraps} " +
             $"--num_treasure={numTreasures} " +
-            $"--num_item={numItems}";
+            $"--num_item={numItems} "+
+            $"--corr_size={corridorSize} ";
         res += randomStart ? " --rand_init" : "";
         print(res);
         return res;
@@ -176,7 +181,7 @@ public class DungeonMaker : MonoBehaviour
                 int x = room.Center.X + i;
                 int y = room.Center.Y + j;
                 Vector3Int pos = new Vector3Int(x, y);
-                tilemap.SetTile(pos, tile,0);
+                tilemap.SetTile(pos,tile,0);
             }
         DrawDecorations(room, level);
     }
@@ -207,14 +212,22 @@ public class DungeonMaker : MonoBehaviour
         int increment = (end.Center.X - start.Center.X + end.Center.Y - start.Center.Y) / distanceBetweenRooms;
         if (door.Orientation.Equals("north") || door.Orientation.Equals("south"))
             for (int i = start.Center.Y; i != end.Center.Y; i += increment)
-                AddTile(tile, start.Center.X, i);
+                for(int j=0;i<corridorSize;i++)
+                    AddTile(tile, start.Center.X+j, i);
         else for (int i = start.Center.X; i != end.Center.X; i += increment)
-                AddTile(tile, i, start.Center.Y);
+                for (int j = 0; i < corridorSize; i++)
+                    AddTile(tile, i, start.Center.Y+j);
+    }
+
+    private void AddTile(RuleTile tile, int x, int y)
+    {
+        Vector3Int pos = new Vector3Int(x, y);
+        tilemap.SetTile(pos, tile,0);
     }
 
     private void AddTile(Tile tile, int x, int y)
     {
         Vector3Int pos = new Vector3Int(x, y);
-        tilemap.SetTile(pos, tile,0);
+        tilemap.SetTile(pos, tile, 0);
     }
 }

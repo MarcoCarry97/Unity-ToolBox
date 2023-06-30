@@ -21,6 +21,7 @@ def get_parser():
     parser.add_argument("--num_treasure", "-c", type=int, default=1)
     parser.add_argument("--num_item", "-i", type=int, default=1)
     parser.add_argument("--rand_init", "-b", action="store_true")
+    parser.add_argument("--corr_size", "-z", type=int, default=1)
     return parser
 def main():
     parser=get_parser()
@@ -35,8 +36,9 @@ def main():
     num_treasure=args.num_treasure
     num_item=args.num_item
     rand_init=args.rand_init
+    corr_size=args.corr_size
     solver=ms.maker_solver()
-    res=solver.solve(num_levels,num_rooms,size,distance,max_path,space,num_trap,num_treasure,num_item,rand_init)
+    res=solver.solve(num_levels,num_rooms,size,distance,max_path,space,num_trap,num_treasure,num_item,rand_init,corr_size)
     dungeon=dict()
     dungeon["status"]=solver.status
     dungeon["levels"]=res

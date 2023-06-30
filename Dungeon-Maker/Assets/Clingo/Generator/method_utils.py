@@ -86,7 +86,7 @@ def extract_init_room_id(init_room):
     return int(init_room)
 
 def create_model_dict(model):
-    model_list=to_list(model,".")
+    model_list=to_asp_list(model)
     size,init_room,rooms, doors, traps, treasures,keys, items, stairs=divide_list(model_list)
     model_dict=dict()
     model_dict["rooms"]=[]
@@ -145,7 +145,7 @@ def divide_list(lis):
             stairs = literal
     return size, init_room, rooms, doors,traps,treasures, keys,items,stairs
 
-def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init, previous=None):
+def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size, previous=None):
     input=to_asp_format(input)
     file = open(filename)
     program = input+file.read()
@@ -156,8 +156,8 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
           "-c distance="+str(distance),
           "-c num_trap="+str(num_trap),
           "-c num_treasure="+str(num_treasure),
-          "-c num_item="+str(num_item),]
-    register_script("place", s.place_script())
+          "-c num_item="+str(num_item),
+          "-c corr_dim="+str(corr_size)]
     control = clingo.Control(arguments=args)
     control.add("base", [], program)
     context=mazer_context()
@@ -165,16 +165,15 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
     handle=control.solve(yield_=True)
     models=to_model_list(handle)
     #res=get_rand_models(models,num_levels)
-    res=get_distant_models(models,input,num_levels,previous)
+    res=get_distant_models(models,previous,num_levels,filename)
     return res, handle.get(), previous
 
 
 def to_asp_format(s):
     s=str(s)
+    s=s.replace(" ",".")
     if(s!=""):
-        s+=" "
-    s=s.replace(" ",". ")
-    s=s.replace("..",".")
+        s+="."
     return s
 
 def to_asp_list(sample):
@@ -192,17 +191,6 @@ def to_model_list(handle):
     for model in handle:
         models+=[str(model)]
     return models
-
-def get_rand_models(models,size):
-    res=[]
-    num=0
-    for i in range(0,size):
-        num=random_formula(num,len(models))
-        res+=[models[num]]
-    if size==1:
-        return res[0]
-    else:
-        return res
 
 def random_formula(num,length):
     multiplier1 = random.randrange(0, length)
@@ -227,25 +215,6 @@ def to_list(s,regex):
     for piece in str(s).split(regex):
         lis=lis+[piece]
     return lis
-
-def get_distance(models,previous=None):
-    if(previous==None):
-        return get_rand_models(models,1)
-    elif not isinstance(previous,list):
-        previous=[previous]
-    sample=get_rand_models(models,1)
-    sample_list=to_asp_list(sample)
-    best=sample
-    best_count=0
-    for model in models:
-        model_list=to_asp_list(model)
-        count=0
-        for literal in model_list:
-            count+=not_in_previous(literal,previous)
-        if best_count<count:
-            best_count=count
-            best=model
-    return best
 
 def count_distance(current_level, previous):
     current_list=to_asp_list(current_level)
@@ -289,36 +258,49 @@ def door_distance(current_level,previous):
 
 
 def get_measure_functions(file):
-    lis = [count_distance, center_distance, size_distance, door_distance ]
+    lis = [count_distance]
+    if file=="create_rooms.lp":
+        lis=[center_distance]
+    if file=="assign_size.lp":
+        lis=[size_distance]
+    if file=="create_doors.lp":
+        lis=[door_distance]
     return lis
 
 
+def get_rand_models(models,size):
+    res=[]
+    num=0
+    for i in range(0,size):
+        num=random_formula(num,len(models))
+        res+=[models[num]]
+    if size==1:
+        return res[0]
+    else:
+        return res
+
+
 def get_distant_models(models, previouses,size, file):
-    res = []
-    measures=get_measure_functions(file)
-    if(not isinstance(previouses,list)):
-        previouses=[previouses]
-    while(len(res)!=size):
-        distance = 0
-        best=None
-        if len(previouses)==0:
-            best=get_rand_models(models,1)
-            res+=[best]
+    res=[]
+    measurements=get_measure_functions(file)
+    for i in range(0,size):
+        if(len(previouses)==0):
+            res+=[get_rand_models(models,1)]
         else:
             for model in models:
-                asp_model=to_asp_format(model)
-                dist = 0
+                distance=0
+                best=get_rand_models(models,1)
                 for prev in previouses:
-                    for measure in measures:
-                        dist+=measure(asp_model,prev)/size
+                    dist=0
+                    for measurement in measurements:
+                        dist+=measurement(model,prev)/len(previouses)
                 if(distance<dist):
                     best=model
                     distance=dist
-        if(best!=None):
-            res+=[best]
-            models.remove(best)
-
-    if len(res) == 1:
+            if(best!=None):
+                res += [best]
+                models.remove(best)
+    if(size==1):
         return res[0]
     else:
         return res
