@@ -573,13 +573,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 741f50bfb8627a74eaaa2603989f8ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numLevels: 7
+  numLevels: 2
   numRooms: 7
-  maxRoomSize: 7
-  distanceBetweenRooms: 10
-  maxPathLength: 7
+  maxRoomSize: 10
+  corridorSize: 3
+  distanceBetweenRooms: 21
+  maxPathLength: 5
   numTreasures: 5
-  spaceSize: 100
+  spaceSize: 10
   numTraps: 5
   numItems: 5
   randomStart: 1
