@@ -3,7 +3,7 @@
 
 #const max=num_rooms*2.
 
-#const min_size=3.
+#const min_size=corr_dim+2.
 
 
 

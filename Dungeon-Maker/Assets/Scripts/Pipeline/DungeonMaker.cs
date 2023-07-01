@@ -28,7 +28,7 @@ public class DungeonMaker : MonoBehaviour
     [SerializeField]
     private int corridorSize;
 
-    [Range(1,10)]
+    [Range(1,50)]
     [SerializeField]
     private int distanceBetweenRooms;
 
@@ -105,6 +105,8 @@ public class DungeonMaker : MonoBehaviour
 
     public string GetArgs()
     {
+        if (maxRoomSize <= corridorSize)
+            maxRoomSize = corridorSize + 3;
         string execPath = $"{Application.dataPath}/Clingo/Generator/maker_main.py";
         string res=$"{execPath} " +
             $"--levels={numLevels} " +
@@ -212,11 +214,11 @@ public class DungeonMaker : MonoBehaviour
         int increment = (end.Center.X - start.Center.X + end.Center.Y - start.Center.Y) / distanceBetweenRooms;
         if (door.Orientation.Equals("north") || door.Orientation.Equals("south"))
             for (int i = start.Center.Y; i != end.Center.Y; i += increment)
-                for(int j=0;i<corridorSize;i++)
-                    AddTile(tile, start.Center.X+j, i);
+                for(int j=0;j<corridorSize;j++)
+                    AddTile(tile, start.Center.X+j-corridorSize/2, i);
         else for (int i = start.Center.X; i != end.Center.X; i += increment)
-                for (int j = 0; i < corridorSize; i++)
-                    AddTile(tile, i, start.Center.Y+j);
+                for (int j = 0; j < corridorSize; j++)
+                    AddTile(tile, i, start.Center.Y+j-corridorSize/2);
     }
 
     private void AddTile(RuleTile tile, int x, int y)

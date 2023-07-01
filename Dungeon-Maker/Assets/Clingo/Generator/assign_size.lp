@@ -3,7 +3,7 @@
 
 #const max=num_rooms*2.
 
-#const min_size=3.
+#const min_size=corr_dim+2.
 
 
 
@@ -28,7 +28,7 @@ size(min_size..max_size,min_size..max_size).
 
 :- room(R), #count{X,Y : room_size(R,X,Y)}!=1.
 
-corr_size(C,1,1) :- corridor(C).
+corr_size(C,corr_dim,corr_dim) :- corridor(C).
 
 
 
