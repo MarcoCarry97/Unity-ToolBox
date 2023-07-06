@@ -24,22 +24,14 @@ namespace ToolBox.Core
             }
         }
 
-        public PanelController Gui { get; private set; }
-        public InventoryController Inventory { get; private set; }
+        public PanelController Gui { get; private set; }        
         public InputController Commands { get; private set; }
-        public PartyController Party { get; private set; }
-        public AudioController Audio { get; private set; }
-        public BattleController Battle { get; private set; }
 
         private void Start()
         {
             DontDestroyOnLoad(this.gameObject);
             Gui = this.GetComponent<PanelController>();
-            Inventory = this.GetComponent<InventoryController>();
             Commands = this.GetComponent<InputController>();
-            Party = this.GetComponent<PartyController>();
-            Audio = this.GetComponent<AudioController>();
-            Battle = this.GetComponent<BattleController>();
         }
 
         private void Awake()
