@@ -17,8 +17,8 @@ namespace ToolBox.Core
                 GameObject instance = Instantiate(game);
                 gameState = instance.GetComponent<GameController>();
             }
-            gameState.Gui.Clear();
-            gameState.Gui.ActivePanel("StartPanel");
+            //gameState.Gui.Clear();
+            //gameState.Gui.ActivePanel("StartPanel");
             Destroy(this.gameObject);
         }
 
