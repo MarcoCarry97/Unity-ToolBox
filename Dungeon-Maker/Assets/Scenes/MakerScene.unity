@@ -573,19 +573,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 741f50bfb8627a74eaaa2603989f8ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numLevels: 2
+  numLevels: 5
   numRooms: 7
   maxRoomSize: 10
   corridorSize: 3
   distanceBetweenRooms: 21
   maxPathLength: 5
   numTreasures: 5
-  spaceSize: 10
+  spaceSize: 20
   numTraps: 5
   numItems: 5
   randomStart: 1
   tile: {fileID: 11400000, guid: 1c133c2d91100844ba32bad5f4da93c5, type: 2}
-  trapTile: {fileID: 11400000, guid: 239cddbc0f5a67f4fa92e6d532e324d2, type: 2}
+  trapTile: {fileID: 11400000, guid: 4e24a674490620c4eb878a731a865d91, type: 2}
   stairsTile: {fileID: 0}
   treasurePrefab: {fileID: 11400000, guid: 5b1834ec8bad8404d859e5301c7a475d, type: 2}
   keyPrefab: {fileID: 11400000, guid: eff74f5df34bd6347a7657a19e0f045b, type: 2}
