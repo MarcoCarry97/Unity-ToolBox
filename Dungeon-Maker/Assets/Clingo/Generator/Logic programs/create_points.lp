@@ -30,11 +30,11 @@ delta(S,X,Y) :- opposite(S,T), delta(T,-X,-Y).
 
 num(N) :- N=(-max..max)*distance.
 
-point(0,0).
+point(0,0,@rand(-corr_dim,corr_dim),@rand(-corr_dim,corr_dim)).
 
-{point(X,Y)} :- num(X), num(Y), point(XS,YS), delta(_,X-XS,Y-YS).
+{point(X,Y,X+@rand(-corr_dim,corr_dim),Y+@rand(-corr_dim,corr_dim))} :- num(X), num(Y), point(XS,YS,A,B), delta(_,X-XS,Y-YS).
 
-:-{point(X,Y)}!=max.
+:-{point(X,Y,CX,CY)}!=max.
 
 %point(0,0).
 

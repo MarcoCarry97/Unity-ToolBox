@@ -130,8 +130,8 @@ public class DungeonMaker : MonoBehaviour
         List<RoomData> visited = new List<RoomData>();
         LevelData level = Dungeon.Levels[index];
         RoomData initRoom = level.GetRoom(level.Init_Room);
-        int x = initRoom.Center.X;
-        int y = initRoom.Center.Y;
+        int x = initRoom.TrueCenter.X;
+        int y = initRoom.TrueCenter.Y;
         RecursiveBuild(level, initRoom, x, y, visited);
     }
 
@@ -180,8 +180,8 @@ public class DungeonMaker : MonoBehaviour
         for (int i = -halfSizeX; i <= halfSizeX; i++)
             for (int j = -halfSizeY; j <= halfSizeY; j++)
             {
-                int x = room.Center.X + i;
-                int y = room.Center.Y + j;
+                int x = room.TrueCenter.X + i;
+                int y = room.TrueCenter.Y + j;
                 Vector3Int pos = new Vector3Int(x, y);
                 tilemap.SetTile(pos,tile,0);
             }
@@ -192,8 +192,8 @@ public class DungeonMaker : MonoBehaviour
     {
         foreach(DecorationData dec in level.GetDecorationsOfRoom(room))
         {
-            int x = dec.Position.X + room.Center.X - room.Size.X / 2;
-            int y = dec.Position.Y + room.Center.Y - room.Size.Y / 2;
+            int x = dec.Position.X + room.TrueCenter.X - room.Size.X / 2;
+            int y = dec.Position.Y + room.TrueCenter.Y - room.Size.Y / 2;
             Vector3Int pos=new Vector3Int(x,y);
             string type = dec.Type;
             Tile typeTile;

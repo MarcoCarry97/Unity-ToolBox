@@ -12,11 +12,16 @@ public class RoomData : ScriptableObject
     private Pair center;
 
     [SerializeField]
+    private Pair trueCenter;
+
+    [SerializeField]
     private Pair size;
 
     public int Id { get { return id; } set { id = value; } }
 
     public Pair Center { get { return center;} set { center = value; } }
+
+    public Pair TrueCenter { get { return trueCenter; } set { trueCenter = value; } }
 
     public Pair Size { get { return size;} set { size = value; } }
 

@@ -18,8 +18,12 @@ def create_room_dict(room,size_list):
     center=dict()
     center["x"]=int(parts[1])
     center["y"]=int(parts[2])
+    true_center = dict()
+    true_center["x"] = int(parts[3])
+    true_center["y"] = int(parts[4])
     room_dict["id"]=int(parts[0])
     room_dict["center"]=center
+    room_dict["truecenter"] = true_center
     for size in size_list:
         if(size["room"]==room_dict["id"]):
             size_dict=dict()
@@ -36,8 +40,8 @@ def create_size_dict(size_list):
         size = size.replace(")", "")
         parts = size.split(",")
         size_dict["room"]=int(parts[0])
-        size_dict["x"] = int(parts[1])
-        size_dict["y"] = int(parts[2])
+        size_dict["x"] = int(parts[3])
+        size_dict["y"] = int(parts[4])
         s_list+=[size_dict]
     return s_list
 
@@ -166,8 +170,8 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
     models=to_model_list(handle)
     if (len(models)==0):
         raise Exception("This logic program cannot generate stable models")
-    res=get_rand_models(models,num_levels)
-    #res=get_distant_models(models,previous,num_levels,filename)
+    #res=get_rand_models(models,num_levels)
+    res=get_distant_models(models,previous,num_levels,filename)
 
     return res, handle.get(), previous
 
