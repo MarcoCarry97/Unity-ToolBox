@@ -147,7 +147,7 @@ def divide_list(lis):
 
 def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size, previous=None):
     input=to_asp_format(input)
-    file = open(filename)
+    file = open("Logic programs/"+filename)
     program = input+file.read()
     args=["--model="+str(num_levels*space),
           "-c num_rooms="+str(num_rooms),

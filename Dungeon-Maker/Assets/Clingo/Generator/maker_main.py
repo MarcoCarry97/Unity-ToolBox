@@ -23,6 +23,7 @@ def get_parser():
     parser.add_argument("--rand_init", "-b", action="store_true")
     parser.add_argument("--corr_size", "-z", type=int, default=1)
     return parser
+
 def main():
     parser=get_parser()
     args=parser.parse_args()
