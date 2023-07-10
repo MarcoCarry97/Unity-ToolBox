@@ -8,7 +8,10 @@ class mazer_context:
 
     def rand(self,offset,limit):
         if((offset,limit) not in self.memory.keys()):
-            rand_num = random.randrange(offset.number, limit.number)
+            if(offset.number<limit.number):
+                rand_num = random.randrange(offset.number, limit.number)
+            else:
+                rand_num=offset.number
             self.memory[(offset, limit)] = rand_num
         return clingo.Number(self.memory[(offset,limit)])
 
