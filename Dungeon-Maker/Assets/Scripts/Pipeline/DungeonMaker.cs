@@ -177,11 +177,12 @@ public class DungeonMaker : MonoBehaviour
     {
         int halfSizeX = room.Size.X / 2;
         int halfSizeY = room.Size.Y / 2;
+        int subtractor = (corridorSize % 2 == 0 && room.Size.X==corridorSize && room.Size.Y==corridorSize) ? 1 : 0;
         for (int i = -halfSizeX; i <= halfSizeX; i++)
             for (int j = -halfSizeY; j <= halfSizeY; j++)
             {
-                int x = room.TrueCenter.X + i;
-                int y = room.TrueCenter.Y + j;
+                int x = room.TrueCenter.X + i - subtractor;
+                int y = room.TrueCenter.Y + j - subtractor;
                 Vector3Int pos = new Vector3Int(x, y);
                 tilemap.SetTile(pos,tile,0);
             }

@@ -19,8 +19,10 @@ class mazer_context:
         nx=x.number
         ndim=dim.number
         ncor=cor_val.number
-        rand_num=random.randrange(ndim//2-ncor,ndim//2+ndim+1)
-        return clingo.Number(nx-rand_num)
+        half_cor=ncor//2
+        half_dim=ndim//2
+        rand_num=random.randrange(nx-half_dim+half_cor,nx+half_dim-half_cor)
+        return clingo.Number(rand_num)
 
     def rand_size(self,x,min_val,max_val):
         nx=x.number

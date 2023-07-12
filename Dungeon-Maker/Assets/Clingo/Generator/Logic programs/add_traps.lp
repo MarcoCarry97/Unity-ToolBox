@@ -25,9 +25,9 @@ trap(0..(num_trap-1)).
 
 {trap_pos(T,R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- trap(T), room_size(R,XS,YS,XR,YR), room_pos(R,X,Y), X<XR, Y<YR.
 
-not trap_pos(T,R,X,Y,PX,PY) :- trap(T), room_size(R,A,B,XR,YR), room_pos(R,X,Y), room_pos(R,PX,PY), X=XR/2.
+not trap_pos(T,R,X,Y,PX,PY) :- trap(T), room_size(R,XS,YS,XR,YR), room_pos(R,X,Y), room_pos(R,PX,PY), PX=XR/2.
 
-not trap_pos(T,R,X,Y,PX,PY) :- trap(T), room_size(R,A,B,XR,YR), room_pos(R,X,Y), room_pos(R,PX,PY), Y=YR/2.
+not trap_pos(T,R,X,Y,PX,PY) :- trap(T), room_size(R,XS,YS,XR,YR), room_pos(R,X,Y), room_pos(R,PX,PY), PY=YR/2.
 
 :- room_size(R,XS,YS,XR,YR),{trap_pos(T,R,X,Y,PX,PY)}!=XS.
 

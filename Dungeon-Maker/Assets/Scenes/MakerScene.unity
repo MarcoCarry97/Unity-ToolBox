@@ -582,7 +582,7 @@ MonoBehaviour:
   distanceBetweenRooms: 21
   maxPathLength: 5
   numTreasures: 5
-  spaceSize: 20
+  spaceSize: 10
   numTraps: 5
   numItems: 5
   randomStart: 1
