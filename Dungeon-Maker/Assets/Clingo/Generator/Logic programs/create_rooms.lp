@@ -23,7 +23,7 @@ corridor(C) :- C=num_rooms..(max-1).
 
 
 
-{room_center(R,X,Y,TX,TY)} :- room(R), point(X,Y,TX,TY).
+{room_center(R,X,Y,@rand_center(X,XS,corr_dim),@rand_center(Y,YS,corr_dim))} :- room(R),room_size(R,_,_,XS,YS), point(X,Y).
 
 :- {room_center(R,X,Y,TX,TY)}!=num_rooms.
 
@@ -39,13 +39,13 @@ corridor(C) :- C=num_rooms..(max-1).
 
 
 
-{corr_center(C,X,Y,X,Y)} :- corridor(C), point(X,Y,A,B).
+{corr_center(C,X,Y,X,Y)} :- corridor(C), point(X,Y).
 
-:- S=max-num_rooms, {corr_center(C,X,Y,X,Y)}!=S.
+:- S=max-num_rooms, {corr_center(C,X,Y,_,_)}!=S.
 
-:- corridor(C), #count{X,Y : corr_center(C,X,Y,X,Y)}!=1.
+:- corridor(C), #count{X,Y : corr_center(C,X,Y,_,_)}!=1.
 
-:- corr_center(R1,X,Y,X,Y), corr_center(R2,X,Y,X,Y), R1!=R2.
+:- corr_center(R1,X,Y,_,_), corr_center(R2,X,Y,_,_), R1!=R2.
 
 
 

@@ -27,7 +27,7 @@
 
 :-initial_room(R), end_room(R).
 
-:- initial_room(I), end_room(E), not path(I,E,@rand(1,max-1)).
+:- initial_room(I), end_room(E), not path(I,E,@rand(1,max-2)).
 
 
 

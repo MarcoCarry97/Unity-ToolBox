@@ -15,11 +15,11 @@
 
 %PART NINE: STAIRS
 
-{stairs(R,X,Y,@rand(0,XS-1),@rand(0,YS-1))} :- end_room(R), room_pos(R,X,Y), room_size(R,A,B,XS,YS).
+{stairs(R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- end_room(R), room_pos(R,X,Y), room_size(R,XS,YS,XR,YR), X<XR, Y<YR.
 
 :-{stairs(R,X,Y,PX,PY)}!=1.
 
-:-stairs(R,X,Y,PX,PY), decoration(D,R,X,Y,PX,PY).
+:-stairs(R,_,_,PX,PY), decoration(D,R,_,_,PX,PY).
 
 %:-stairs(R,X,Y), decoration(D,R,X+1,Y).
 

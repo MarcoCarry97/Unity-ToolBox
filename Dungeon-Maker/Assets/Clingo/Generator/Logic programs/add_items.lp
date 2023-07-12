@@ -17,11 +17,13 @@
 
 item(0..(num_item-1)).
 
-{item_pos(T,R,X,Y,@rand(0,XS-1),@rand(0,YS-1))} :- item(T), room_pos(R,X,Y), room_size(R,A,B,XS,YS).
+{item_pos(T,R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- item(T), room_pos(R,X,Y), room_size(R,XS,YS,XR,YR), X<XR, Y<YR.
 
 decoration(D,R,X,Y,PX,PY) :- item_pos(D,R,X,Y,PX,PY).
 
-:-decoration(D1,R,X,Y,PX,PY), decoration(D2,R,X,Y,PX,PY), D1!=D2.
+:-room(R), #count{I,X,Y,PX,PY : item_pos(I,R,X,Y,PX,PY)}!=num_item.
+
+:-decoration(D1,R,_,_,PX,PY), decoration(D2,R,_,_,PX,PY), D1!=D2.
 
 
 

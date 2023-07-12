@@ -11,7 +11,9 @@
 
 #const init_pos_y=0.
 
+room(R) :- R=0..(num_rooms-1).
 
+corridor(C) :- C=num_rooms..(max-1).
 
 
 %PART THREE: DIMENSIONS.
@@ -22,7 +24,7 @@ size(min_size..max_size,min_size..max_size).
 
 %{room_size(R,@rand(min_size,max_size),@rand(min_size,max_size))} :- room(R).
 
-{room_size(R,X,Y,@rand(min_size,max_size), @rand(min_size,max_size
+{room_size(R,X,Y,@rand_size(X,min_size,max_size), @rand_size(Y,min_size,max_size
 ))} :- room(R), size(X,Y).
 
 :-{room_size(R,X,Y,XR,YR)}!=num_rooms.

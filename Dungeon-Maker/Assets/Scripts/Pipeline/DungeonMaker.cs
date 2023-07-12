@@ -130,8 +130,8 @@ public class DungeonMaker : MonoBehaviour
         List<RoomData> visited = new List<RoomData>();
         LevelData level = Dungeon.Levels[index];
         RoomData initRoom = level.GetRoom(level.Init_Room);
-        int x = initRoom.TrueCenter.X;
-        int y = initRoom.TrueCenter.Y;
+        int x = initRoom.Center.X;
+        int y = initRoom.Center.Y;
         RecursiveBuild(level, initRoom, x, y, visited);
     }
 
