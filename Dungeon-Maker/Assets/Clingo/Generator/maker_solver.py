@@ -27,7 +27,9 @@ class maker_solver:
 
     def solve(self, num_levels, num_rooms, size, distance,path,space,num_trap,num_treasure,num_item,rand_init,corr_size):
         create_points="create_points.lp"
-        files=["assign_size.lp","create_rooms.lp","create_doors.lp","add_traps.lp", "add_treasures.lp","add_keys.lp", "add_items.lp", "initial_end.lp","add_stairs.lp"]
+        #files=["assign_size.lp","create_rooms.lp","create_doors.lp","autocomplete.lp","add_traps.lp", "add_treasures.lp","add_keys.lp", "add_items.lp", "initial_end.lp","add_stairs.lp"]
+        #files=["assign_size.lp","create_rooms.lp","create_doors.lp","autocomplete.lp","initial_end.lp"]
+        files=["assign_size.lp","rooms_doors.lp", "initial_end.lp","add_traps.lp", "add_treasures.lp","add_keys.lp", "add_items.lp", "initial_end.lp","add_stairs.lp"]
         incomplete_models=[]
         for i in range(0,num_levels):
             incomplete_model, status, _ = method_utils.single_model_solving("", create_points, 1, num_rooms, size,distance, path,space,num_trap, num_treasure, num_item, rand_init,corr_size,previous=incomplete_models)
@@ -39,7 +41,7 @@ class maker_solver:
         for model in incomplete_models:
             input=model
             for file in files:
-                #print("File: "+file)
+                print("File: "+file)
                 #print("Input: "+input)
                 input, status, _ = method_utils.single_model_solving(input, file, 1, num_rooms, size, distance, path,space, num_trap, num_treasure, num_item,rand_init,corr_size, previous=previouses)
             previouses+=[input]

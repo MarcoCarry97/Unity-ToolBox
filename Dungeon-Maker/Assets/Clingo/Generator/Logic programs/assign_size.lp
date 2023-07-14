@@ -45,8 +45,6 @@ place_size(P,X,Y,XR,YR) :- corr_size(P,X,Y,XR,YR).
 
 pos(0..C-1,0..D-1) :- room_size(R,A,B,C,D).
 
-
-
 room_pos(R,X,Y) :- room_size(R,A,B,C,D), pos(X,Y).
 
 %not room_pos(R,X,Y) :- room(R),X=0; room(R),Y=0.
