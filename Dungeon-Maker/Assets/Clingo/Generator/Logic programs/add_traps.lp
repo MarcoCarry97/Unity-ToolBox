@@ -35,5 +35,5 @@ not trap_pos(T,R,X,Y,PX,PY) :- trap(T), room_size(R,XS,YS,XR,YR), room_pos(R,X,Y
 
 decoration(D,R,X,Y,PX,PY) :- trap_pos(D,R,X,Y,PX,PY).
 
-:-decoration(D1,R,_,_,PX,PY), decoration(D2,R,_,_,PX,PY), D1!=D2.
+:-decoration(D1,R,X,Y,_,_), decoration(D2,R,X,Y,_,_), D1!=D2.
 

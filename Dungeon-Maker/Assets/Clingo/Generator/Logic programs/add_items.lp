@@ -21,9 +21,9 @@ item(0..(num_item-1)).
 
 decoration(D,R,X,Y,PX,PY) :- item_pos(D,R,X,Y,PX,PY).
 
-:-room(R), #count{I,X,Y,PX,PY : item_pos(I,R,X,Y,PX,PY)}!=num_item.
+:-room(R), #count{I,X,Y,PX,PY : item_pos(I,R,X,Y,PX,PY)}<1.
 
-:-decoration(D1,R,_,_,PX,PY), decoration(D2,R,_,_,PX,PY), D1!=D2.
+:-decoration(D1,R,X,Y,_,_), decoration(D2,R,X,Y,_,_), D1!=D2.
 
 
 

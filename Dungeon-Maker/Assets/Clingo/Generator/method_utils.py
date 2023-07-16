@@ -149,7 +149,7 @@ def divide_list(lis):
             stairs = literal
     return size, init_room, rooms, doors,traps,treasures, keys,items,stairs
 
-def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size, previous=None):
+def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=None):
     input=to_asp_format(input)
     file = open("Logic programs/"+filename)
     program = input+file.read()
@@ -161,7 +161,8 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
           "-c num_trap="+str(num_trap),
           "-c num_treasure="+str(num_treasure),
           "-c num_item="+str(num_item),
-          "-c corr_dim="+str(corr_size)]
+          "-c corr_dim="+str(corr_size),
+          "-c num_enemy="+str(num_enemy)]
     control = clingo.Control(arguments=args)
     control.add("base", [], program)
     context=mazer_context()
