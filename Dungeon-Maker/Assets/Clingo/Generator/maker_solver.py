@@ -41,7 +41,7 @@ class maker_solver:
         for model in incomplete_models:
             input=model
             for file in files:
-                print("File: "+file)
+                #print("File: "+file)
                 #print("Input: "+input)
                 input, status, _ = method_utils.single_model_solving(input, file, 1, num_rooms, size, distance, path,space, num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=previouses)
             previouses+=[input]
