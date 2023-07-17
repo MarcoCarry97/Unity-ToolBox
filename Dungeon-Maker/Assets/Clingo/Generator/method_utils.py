@@ -91,7 +91,7 @@ def extract_init_room_id(init_room):
 
 def create_model_dict(model):
     model_list=to_asp_list(model)
-    size,init_room,rooms, doors, traps, treasures,keys, items, stairs=divide_list(model_list)
+    size,init_room,rooms, doors, traps, treasures,keys, items,enemies, stairs=divide_list(model_list)
     model_dict=dict()
     model_dict["rooms"]=[]
     model_dict["doors"]=[]
@@ -104,6 +104,7 @@ def create_model_dict(model):
     model_dict["decorations"]+=create_decoration_dict(treasures,"treasure")
     model_dict["decorations"]+=create_decoration_dict(keys,"key")
     model_dict["decorations"]+=create_decoration_dict(items,"item")
+    model_dict["decorations"]+=create_decoration_dict(enemies,"enemy")
     if(stairs!=None):
         model_dict["stairs"]=create_stairs_dict(stairs)
     for room in rooms:
@@ -125,6 +126,7 @@ def divide_list(lis):
     items=[]
     stairs=None
     keys=[]
+    enemies=[]
     for literal in lis:
         parts=literal.split("(")
         if(parts[0]=="place_size"):
@@ -147,7 +149,9 @@ def divide_list(lis):
             items = [literal]
         elif (parts[0] == "stairs"):
             stairs = literal
-    return size, init_room, rooms, doors,traps,treasures, keys,items,stairs
+        elif (parts[0] == "enemy_pos"):
+            enemies+=[literal]
+    return size, init_room, rooms, doors,traps,treasures, keys,items,enemies,stairs
 
 def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=None):
     input=to_asp_format(input)

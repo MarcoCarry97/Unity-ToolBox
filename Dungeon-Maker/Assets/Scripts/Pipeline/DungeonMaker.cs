@@ -74,6 +74,9 @@ public class DungeonMaker : MonoBehaviour
     [SerializeField]
     private Tile keyPrefab;
 
+    [SerializeField]
+    private Tile enemySpawnTile;
+
     public IEnumerator Generate()
     {
         Process process = new Process
@@ -202,6 +205,8 @@ public class DungeonMaker : MonoBehaviour
                 typeTile = trapTile;
             else if (type.Equals("treasure"))
                 typeTile = treasurePrefab;
+            else if (type.Equals("enemy"))
+                typeTile = enemySpawnTile;
             else typeTile = keyPrefab;
             tilemap.SetTile(pos, typeTile, 1);
         }

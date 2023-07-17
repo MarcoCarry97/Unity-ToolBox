@@ -591,6 +591,7 @@ MonoBehaviour:
   stairsTile: {fileID: 11400000, guid: 5b1834ec8bad8404d859e5301c7a475d, type: 2}
   treasurePrefab: {fileID: 11400000, guid: eff74f5df34bd6347a7657a19e0f045b, type: 2}
   keyPrefab: {fileID: 11400000, guid: 14094af5889f615408ade3ec7a7f69b6, type: 2}
+  enemySpawnTile: {fileID: 11400000, guid: 0a6471337a5a8624bb939f7def02bc1e, type: 2}
 --- !u!4 &812372173
 Transform:
   m_ObjectHideFlags: 0
