@@ -89,7 +89,7 @@ public class DungeonMaker : MonoBehaviour
                 UseShellExecute = false,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
-                WorkingDirectory = $"{Application.dataPath}/Clingo/Generator"
+                WorkingDirectory = $"{Application.dataPath}/Mazer/Generator"
             }
         };
         process.Start();
@@ -110,7 +110,7 @@ public class DungeonMaker : MonoBehaviour
     {
         if (maxRoomSize <= corridorSize)
             maxRoomSize = corridorSize + 3;
-        string execPath = $"{Application.dataPath}/Clingo/Generator/maker_main.py";
+        string execPath = $"{Application.dataPath}/Mazer/Generator/maker_main.py";
         string res=$"{execPath} " +
             $"--levels={numLevels} " +
             $"--rooms={numRooms} " +
