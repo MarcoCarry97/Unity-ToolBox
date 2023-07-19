@@ -35,13 +35,14 @@ public class World : MonoBehaviour
 
     public void SetTile(Vector3Int position, RuleTile tile, int level)
     {
-        RuleTile t = ScriptableObject.Instantiate<RuleTile>(tile);
         Tilemap levelMap = null;
+        Tile t=new Tile();
+        t.sprite = tile.m_DefaultSprite;
         if (level == 0) levelMap = level0;
         else levelMap = level1;
-        levelMap.SetTile(position, t);
+        levelMap.SetTile(position,t);
         baseMap.SetTile(position, null);
-        //t.Refresh(position, levelMap);
+        tile.RefreshTiles(position, levelMap);
     }
 
     public void SetTile(Vector3Int position, Tile tile, int level)

@@ -4,11 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class DungeonMaker : MonoBehaviour
 {
@@ -102,8 +100,14 @@ public class DungeonMaker : MonoBehaviour
         DungeonData dungeon = JsonConvert.DeserializeObject<DungeonData>(result);
         print(dungeon.ToString());
         Dungeon = dungeon;
-        Build(0);
+        StartCoroutine(BuildCoroutine());
         
+    }
+
+    private IEnumerator BuildCoroutine()
+    {
+        Build(0);
+        yield break;
     }
 
     public string GetArgs()
