@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
@@ -165,5 +166,49 @@ public static class RuleTileExtensions
         return distance;
     }
 
+    public static void ReloadTile(this RuleTile ruletile, Vector3Int position, Tilemap tilemap)
+    {
+        UpdateTile(ruletile,position,tilemap);
+        foreach (Vector3Int neighPos in ruletile.neighborPositions)
+            UpdateTile(ruletile, position + neighPos, tilemap);
+    }
+
+    private static void UpdateTile(RuleTile ruletile, Vector3Int position, Tilemap tilemap)
+    {
+        if (tilemap.GetTile(position) == null)
+            return;
+        int dontCare = 0;
+        int no = RuleTile.TilingRuleOutput.Neighbor.NotThis;
+        int ok = RuleTile.TilingRuleOutput.Neighbor.This;
+        Tile newTile = new Tile();
+        newTile.sprite = ruletile.m_DefaultSprite;
+        for(int j=0;j<ruletile.m_TilingRules.Count;j++)
+        {
+            RuleTile.TilingRule rule = ruletile.m_TilingRules[j];
+            bool noProblem = true;
+            for(int i=0;i<rule.m_NeighborPositions.Count && noProblem;i++)
+            {
+                Vector3Int neighPos = rule.m_NeighborPositions[i];
+                int neighIndex = rule.m_NeighborPositions.IndexOf(neighPos);
+                int neighStatus= rule.m_Neighbors[neighIndex];
+                TileBase oldTile = tilemap.GetTile(position + neighPos);
+                if (neighStatus != dontCare)
+                {
+                    if (neighStatus == no)
+                    {
+                        if (oldTile != null)
+                            noProblem = false;
+                    }
+                    else if (oldTile == null)
+                        noProblem = false;
+                }  
+            }
+            if(noProblem)
+            {
+                newTile.sprite = rule.m_Sprites[0];
+            }
+        }
+        tilemap.SetTile(position, newTile);
+    }
     
 }

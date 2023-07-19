@@ -42,7 +42,7 @@ public class World : MonoBehaviour
         else levelMap = level1;
         levelMap.SetTile(position,t);
         baseMap.SetTile(position, null);
-        tile.RefreshTiles(position, levelMap);
+        tile.ReloadTile(position, levelMap);
     }
 
     public void SetTile(Vector3Int position, Tile tile, int level)
