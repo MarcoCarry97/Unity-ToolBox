@@ -12,9 +12,9 @@ public class World : MonoBehaviour
     [SerializeField]
     private Tile baseTile;
 
-    [SerializeField]
-    [Range(100, 1000)]
-    private int size;
+    public int Size { get; set; }
+
+
 
     private void Start()
     {
@@ -25,7 +25,7 @@ public class World : MonoBehaviour
 
     public void ClearAllTiles()
     {
-        int halfSize = size / 2;
+        int halfSize = Size / 2;
         for (int i = -halfSize; i <= halfSize; i++)
             for (int j = -halfSize; j <= halfSize; j++)
                 baseMap.SetTile(new Vector3Int(i, j, 0), baseTile);

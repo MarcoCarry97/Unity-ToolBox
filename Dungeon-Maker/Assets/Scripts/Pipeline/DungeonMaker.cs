@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -51,6 +52,10 @@ public class DungeonMaker : MonoBehaviour
     private int numItems;
 
     [SerializeField]
+    [Range(0, 10)]
+    private int numEnemiesSpawnPoints;
+
+    [SerializeField]
     private bool randomStart;
 
     public DungeonData Dungeon { get; private set; }
@@ -94,11 +99,9 @@ public class DungeonMaker : MonoBehaviour
         yield return new WaitUntil(() => !process.HasExited);
         string result = process.ReadStandardOutput();
         string error = process.ReadStandardError();
-        UnityEngine.Debug.LogError(error);
-        print("Exit Code: "+process.ExitCode);
-        print("Result: " + result);
+        if (!error.Equals(""))
+            UnityEngine.Debug.LogError(error);
         DungeonData dungeon = JsonConvert.DeserializeObject<DungeonData>(result);
-        print(dungeon.ToString());
         Dungeon = dungeon;
         StartCoroutine(BuildCoroutine());
         
@@ -133,13 +136,30 @@ public class DungeonMaker : MonoBehaviour
 
     public void Build(int index)
     {
-        tilemap.ClearAllTiles();
         List<RoomData> visited = new List<RoomData>();
         LevelData level = Dungeon.Levels[index];
+        tilemap.Size = GetSize(level);
+        tilemap.ClearAllTiles();
         RoomData initRoom = level.GetRoom(level.Init_Room);
         int x = initRoom.Center.X;
         int y = initRoom.Center.Y;
         RecursiveBuild(level, initRoom, x, y, visited);
+    }
+
+    private int GetSize(LevelData level)
+    {
+        int farPoint = Math.Max(Math.Abs(level.Rooms[0].TrueCenter.X), Math.Abs(level.Rooms[0].Center.Y));
+        int maxSize= Math.Max(Math.Abs(level.Rooms[0].Size.X), Math.Abs(level.Rooms[0].Size.Y));
+        for (int i=1;i<level.Rooms.Count;i++)
+        {
+            int tmpFar = Math.Max(Math.Abs(level.Rooms[0].TrueCenter.X), Math.Abs(level.Rooms[i].Center.Y));
+            int tmpSize = Math.Max(Math.Abs(level.Rooms[0].Size.X), Math.Abs(level.Rooms[i].Size.Y));
+            if (farPoint<tmpFar)
+                farPoint = tmpFar;
+            if(tmpSize>maxSize)
+                maxSize = tmpSize;
+        }
+        return farPoint * maxSize/2;
     }
 
     private void Start()
