@@ -84,6 +84,18 @@ def create_stairs_dict(stairs):
     stairs_dict["position"]=pos_dict
     return stairs_dict
 
+def create_start_dict(start):
+    start_dict=dict()
+    start=start.replace("start_point(","")
+    start=start.replace(")","")
+    parts=start.split(",")
+    pos_dict = dict()
+    pos_dict["x"] = int(parts[1])
+    pos_dict["y"] = int(parts[2])
+    start_dict["room"]=int(parts[0])
+    start_dict["position"]=pos_dict
+    return start_dict
+
 def extract_init_room_id(init_room):
     init_room=init_room.replace("initial_room(","")
     init_room=init_room.replace(")","")
@@ -91,7 +103,7 @@ def extract_init_room_id(init_room):
 
 def create_model_dict(model):
     model_list=to_asp_list(model)
-    size,init_room,rooms, doors, traps, treasures,keys, items,enemies, stairs=divide_list(model_list)
+    size,init_room,rooms, doors, traps, treasures,keys, items,enemies, stairs,start=divide_list(model_list)
     model_dict=dict()
     model_dict["rooms"]=[]
     model_dict["doors"]=[]
@@ -107,6 +119,8 @@ def create_model_dict(model):
     model_dict["decorations"]+=create_decoration_dict(enemies,"enemy")
     if(stairs!=None):
         model_dict["stairs"]=create_stairs_dict(stairs)
+    if (stairs != None):
+        model_dict["start_point"] = create_start_dict(start)
     for room in rooms:
         room_dict=create_room_dict(room,size_list)
         model_dict["rooms"]+=[room_dict]
@@ -125,6 +139,7 @@ def divide_list(lis):
     treasures=[]
     items=[]
     stairs=None
+    start=None
     keys=[]
     enemies=[]
     for literal in lis:
@@ -149,9 +164,11 @@ def divide_list(lis):
             items = [literal]
         elif (parts[0] == "stairs"):
             stairs = literal
+        elif (parts[0] == "start_point"):
+            start = literal
         elif (parts[0] == "enemy_pos"):
             enemies+=[literal]
-    return size, init_room, rooms, doors,traps,treasures, keys,items,enemies,stairs
+    return size, init_room, rooms, doors,traps,treasures, keys,items,enemies,stairs,start
 
 def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=None):
     input=to_asp_format(input)
@@ -271,12 +288,10 @@ def door_distance(current_level,previous):
 
 def get_measure_functions(file):
     lis = [count_distance]
-    if file=="create_rooms.lp":
-        lis=[center_distance]
+    if file=="rooms_doors.lp":
+        lis=[center_distance,door_distance]
     if file=="assign_size.lp":
         lis=[size_distance]
-    if file=="create_doors.lp":
-        lis=[door_distance]
     return lis
 
 
