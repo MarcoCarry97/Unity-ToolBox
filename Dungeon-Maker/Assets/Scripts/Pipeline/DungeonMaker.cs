@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -96,22 +97,16 @@ public class DungeonMaker : MonoBehaviour
             }
         };
         process.Start();
-        yield return new WaitUntil(() => !process.HasExited);
+        //process.WaitForExit();
         string result = process.ReadStandardOutput();
         string error = process.ReadStandardError();
         if (!error.Equals(""))
             UnityEngine.Debug.LogError(error);
         DungeonData dungeon = JsonConvert.DeserializeObject<DungeonData>(result);
         Dungeon = dungeon;
-        StartCoroutine(BuildCoroutine());
-        
+        yield return (Build(0));
     }
 
-    private IEnumerator BuildCoroutine()
-    {
-        Build(0);
-        yield break;
-    }
 
     public string GetArgs()
     {
@@ -134,7 +129,7 @@ public class DungeonMaker : MonoBehaviour
         return res;
     }
 
-    public void Build(int index)
+    /*public void Build(int index)
     {
         List<RoomData> visited = new List<RoomData>();
         LevelData level = Dungeon.Levels[index];
@@ -144,6 +139,19 @@ public class DungeonMaker : MonoBehaviour
         int x = initRoom.Center.X;
         int y = initRoom.Center.Y;
         RecursiveBuild(level, initRoom, x, y, visited);
+    }*/
+
+    public IEnumerator Build(int index)
+    {
+        List<RoomData> visited = new List<RoomData>();
+        LevelData level = Dungeon.Levels[index];
+        tilemap.Size = GetSize(level);
+        tilemap.ClearAllTiles();
+        yield return new WaitForEndOfFrame();
+        RoomData initRoom = level.GetRoom(level.Init_Room);
+        int x = initRoom.Center.X;
+        int y = initRoom.Center.Y;
+        yield return RecursiveBuild(level, initRoom, x, y, visited);
     }
 
     private int GetSize(LevelData level)
@@ -180,7 +188,7 @@ public class DungeonMaker : MonoBehaviour
         return distance;
     }
 
-    private void RecursiveBuild(LevelData level, RoomData room, int x, int y, List<RoomData> visited)
+    /*private void RecursiveBuild(LevelData level, RoomData room, int x, int y, List<RoomData> visited)
     {
         if (!visited.Contains(room))
         {
@@ -198,9 +206,29 @@ public class DungeonMaker : MonoBehaviour
                 RecursiveBuild(level, dest, x + upX, y + upY, visited);
             }
         }
+    }*/
+
+    private IEnumerator RecursiveBuild(LevelData level, RoomData room, int x, int y, List<RoomData> visited)
+    {
+        if (!visited.Contains(room))
+        {
+            print("Room: " + room.Id);
+            visited.Add(room);
+            yield return StartCoroutine(DrawRoomTiles(room, level));
+            foreach (DoorData door in level.GetDoorsOfRoom(room))
+            {
+                yield return StartCoroutine(DrawCorridorTiles(level, door));
+                (int, int) up = door.GetOrientationValues(5);
+                int upX = up.Item1;
+                int upY = up.Item2;
+                RoomData dest = level.GetRoom(door.End);
+                yield return RecursiveBuild(level, dest, x + upX, y + upY, visited);
+            }
+            yield return new WaitForEndOfFrame();
+        }
     }
 
-    private void DrawRoomTiles(RoomData room, LevelData level)
+    private IEnumerator DrawRoomTiles(RoomData room, LevelData level)
     {
         int halfSizeX = room.Size.X / 2;
         int halfSizeY = room.Size.Y / 2;
@@ -212,11 +240,12 @@ public class DungeonMaker : MonoBehaviour
                 int y = room.TrueCenter.Y + j - subtractor;
                 Vector3Int pos = new Vector3Int(x, y);
                 tilemap.SetTile(pos,tile,0);
+                yield return new WaitForEndOfFrame();
             }
-        DrawDecorations(room, level);
+        yield return StartCoroutine(DrawDecorations(room, level));
     }
 
-    private void DrawDecorations(RoomData room, LevelData level)
+    private IEnumerator DrawDecorations(RoomData room, LevelData level)
     {
         foreach(DecorationData dec in level.GetDecorationsOfRoom(room))
         {
@@ -233,10 +262,11 @@ public class DungeonMaker : MonoBehaviour
                 typeTile = enemySpawnTile;
             else typeTile = keyPrefab;
             tilemap.SetTile(pos, typeTile, 1);
+            yield return new WaitForEndOfFrame();
         }
     }
 
-    private void DrawCorridorTiles(LevelData level, DoorData door)
+    private IEnumerator DrawCorridorTiles(LevelData level, DoorData door)
     {
         RoomData start = level.GetRoom(door.Start);
         RoomData end = level.GetRoom(door.End);
@@ -245,10 +275,16 @@ public class DungeonMaker : MonoBehaviour
         if (door.Orientation.Equals("north") || door.Orientation.Equals("south"))
             for (int i = start.Center.Y; i != end.Center.Y; i += increment)
                 for(int j=0;j<corridorSize;j++)
-                    AddTile(tile, start.Center.X+j-corridorSize/2, i);
+                {
+                    AddTile(tile, start.Center.X + j - corridorSize / 2, i);
+                    yield return new WaitForEndOfFrame();
+                }
         else for (int i = start.Center.X; i != end.Center.X; i += increment)
                 for (int j = 0; j < corridorSize; j++)
-                    AddTile(tile, i, start.Center.Y+j-corridorSize/2);
+                {
+                    AddTile(tile, i, start.Center.Y + j - corridorSize / 2);
+                    yield return new WaitForEndOfFrame();
+                }
     }
 
     private void AddTile(RuleTile tile, int x, int y)

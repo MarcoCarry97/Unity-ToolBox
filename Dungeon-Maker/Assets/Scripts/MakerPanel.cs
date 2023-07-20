@@ -31,6 +31,7 @@ public class MakerPanel : MonoBehaviour
     private void OnGenerate()
     {
         StartCoroutine(maker.Generate());
+        //maker.Generate();
         current = 0;
     }
 
@@ -39,13 +40,13 @@ public class MakerPanel : MonoBehaviour
         current--;
         if (current < 0)
             current = 0;
-        StartCoroutine(BuildCoroutine());
+        StartCoroutine(maker.Build(current));
     }
 
     private void OnNext()
     {
         current=(current+1)%maker.Dungeon.Levels.Count;
-        StartCoroutine(BuildCoroutine());
+        StartCoroutine(maker.Build(current));
     }
 
     private IEnumerator BuildCoroutine()
