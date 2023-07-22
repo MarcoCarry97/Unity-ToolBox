@@ -40,6 +40,7 @@ def main():
     rand_init=args.rand_init
     corr_size=args.corr_size
     num_enemy=args.num_enemy
+    #solver=ms.timed_solver()
     solver=ms.maker_solver()
     res=solver.solve(num_levels,num_rooms,size,distance,max_path,space,num_trap,num_treasure,num_item,rand_init,corr_size,num_enemy)
     dungeon=dict()

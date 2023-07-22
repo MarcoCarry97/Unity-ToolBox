@@ -214,7 +214,7 @@ public class DungeonMaker : MonoBehaviour
         {
             print("Room: " + room.Id);
             visited.Add(room);
-            yield return StartCoroutine(DrawRoomTiles(room, level));
+            StartCoroutine(DrawRoomTiles(room, level));
             foreach (DoorData door in level.GetDoorsOfRoom(room))
             {
                 yield return StartCoroutine(DrawCorridorTiles(level, door));
@@ -222,9 +222,8 @@ public class DungeonMaker : MonoBehaviour
                 int upX = up.Item1;
                 int upY = up.Item2;
                 RoomData dest = level.GetRoom(door.End);
-                yield return RecursiveBuild(level, dest, x + upX, y + upY, visited);
+                StartCoroutine(RecursiveBuild(level, dest, x + upX, y + upY, visited));
             }
-            yield return new WaitForEndOfFrame();
         }
     }
 
@@ -242,7 +241,25 @@ public class DungeonMaker : MonoBehaviour
                 tilemap.SetTile(pos,tile,0);
                 yield return new WaitForEndOfFrame();
             }
+        foreach (ExpansionData expansion in room.Expansions)
+            yield return StartCoroutine(DrawExpansion(expansion, room.TrueCenter, room.Size));
         yield return StartCoroutine(DrawDecorations(room, level));
+    }
+
+    private IEnumerator DrawExpansion(ExpansionData expansion,Pair center, Pair size)
+    {
+        int halfSizeX = expansion.Size.X / 2;
+        int halfSizeY =expansion.Size.Y / 2;
+        
+        for (int i = -halfSizeX; i <= halfSizeX; i++)
+            for (int j = -halfSizeY; j <= halfSizeY; j++)
+            {
+                int x = expansion.TrueCenter.X +center.X+ i;
+                int y = expansion.TrueCenter.Y +center.Y+ j;
+                Vector3Int pos = new Vector3Int(x, y);
+                tilemap.SetTile(pos, tile, 0);
+                yield return new WaitForEndOfFrame();
+            }
     }
 
     private IEnumerator DrawDecorations(RoomData room, LevelData level)

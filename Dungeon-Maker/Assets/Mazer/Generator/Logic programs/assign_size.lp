@@ -18,22 +18,22 @@ corridor(C) :- C=num_rooms..(max-1).
 
 %PART THREE: DIMENSIONS.
 
-size(min_size..max_size,min_size..max_size).
+%size(min_size..max_size,min_size..max_size).
 
 %{room_size(R,min_size..max_size,min_size..max_size)}=1 :- room(R).
 
 %{room_size(R,@rand(min_size,max_size),@rand(min_size,max_size))} :- room(R).
 
-{room_size(R,X,Y,@rand_size(X,min_size,max_size), @rand_size(Y,min_size,max_size
-))} :- room(R), size(X,Y).
+%{room_size(R,X,Y,@rand_size(X,min_size,max_size), @rand_size(Y,min_size,max_size
+%))} :- room(R), size(X,Y).
 
-:-{room_size(R,X,Y,XR,YR)}!=num_rooms.
+%:-{room_size(R,X,Y,XR,YR)}!=num_rooms.
 
-:- room(R), #count{X,Y : room_size(R,X,Y,XR,YR)}!=1.
+%:- room(R), #count{X,Y : room_size(R,X,Y,XR,YR)}!=1.
 
 corr_size(C,corr_dim,corr_dim,corr_dim,corr_dim) :- corridor(C).
 
-
+num_rooms {room_size(R,min_size..max_size,min_size..max_size,@rand(min_size,max_size),@rand(min_size,max_size))} num_rooms :- room(R).
 
 
 

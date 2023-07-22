@@ -36,6 +36,10 @@ point(0,0).
 
 :-{point(X,Y)}!=max.
 
+%point((0..(max-1))*distance, (0..(max-1))*distance).
+
+%:- point(X1,Y1), point(X2,Y2), not delta(_,X2-X1,Y2-Y1).
+
 %point(0,0).
 
 %max {point((-max..max)*distance+A,(-max..max)*distance+B)} max :- point(X1,Y1), delta(_,X1-A,Y2-B).

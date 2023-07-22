@@ -11,7 +11,7 @@ import random
 
 import clingo
 
-def create_room_dict(room,size_list):
+def create_room_dict(room,size_list,expand_list):
     room_dict=dict()
     room=room.replace("place_center(","").replace(")","")
     parts=room.split(",")
@@ -24,13 +24,44 @@ def create_room_dict(room,size_list):
     room_dict["id"]=int(parts[0])
     room_dict["center"]=center
     room_dict["truecenter"] = true_center
+    room_dict["expansions"] = []
     for size in size_list:
         if(size["room"]==room_dict["id"]):
             size_dict=dict()
             size_dict["x"]=size["x"]
             size_dict["y"]=size["y"]
             room_dict["size"]=size_dict
+    for expand in expand_list:
+        if(expand["room"]==room_dict["id"]):
+            exp_dict=dict()
+            exp_dict["center"]=expand["center"]
+            exp_dict["truecenter"]=expand["truecenter"]
+            exp_dict["size"]=expand["size"]
+            room_dict["expansions"]+=[exp_dict]
     return room_dict
+
+def create_expand_dict(rooms,sizes,expands):
+    lis=[]
+    for expand in expands:
+        exp_dict = dict()
+        expand = expand.replace("expansion(", "").replace(")", "")
+        parts = expand.split(",")
+        room_list=[]
+        for room in rooms:
+            room_dict=create_room_dict(room,sizes,[])
+            id = int(parts[0])
+            exp_id = int(parts[1])
+            room_id = int(parts[2])
+            if (room_dict["id"] == id):
+                exp_dict["id"] = id
+                exp_dict["room"] = room_id
+                exp_dict["center"] = room_dict["center"]
+                exp_dict["truecenter"] = room_dict["truecenter"]
+                exp_dict["size"] = room_dict["size"]
+                lis += [exp_dict]
+
+    return lis
+
 
 def create_size_dict(size_list):
     s_list=[]
@@ -103,11 +134,13 @@ def extract_init_room_id(init_room):
 
 def create_model_dict(model):
     model_list=to_asp_list(model)
-    size,init_room,rooms, doors, traps, treasures,keys, items,enemies, stairs,start=divide_list(model_list)
+    size,init_room,rooms, doors, traps, treasures,keys, items,enemies, stairs,start,expands=divide_list(model_list)
     model_dict=dict()
     model_dict["rooms"]=[]
     model_dict["doors"]=[]
     size_list=create_size_dict(size)
+    expands_list=create_expand_dict(rooms,size_list,expands)
+    #print(expands)
     init=None
     if(init_room!=None):
         init=extract_init_room_id(init_room)
@@ -122,7 +155,7 @@ def create_model_dict(model):
     if (stairs != None):
         model_dict["start_point"] = create_start_dict(start)
     for room in rooms:
-        room_dict=create_room_dict(room,size_list)
+        room_dict=create_room_dict(room,size_list,expands_list)
         model_dict["rooms"]+=[room_dict]
     for door in doors:
         door_dict=create_door_dict(door)
@@ -142,6 +175,7 @@ def divide_list(lis):
     start=None
     keys=[]
     enemies=[]
+    expands=[]
     for literal in lis:
         parts=literal.split("(")
         if(parts[0]=="place_size"):
@@ -168,7 +202,9 @@ def divide_list(lis):
             start = literal
         elif (parts[0] == "enemy_pos"):
             enemies+=[literal]
-    return size, init_room, rooms, doors,traps,treasures, keys,items,enemies,stairs,start
+        elif (parts[0] == "expansion"):
+            expands+=[literal]
+    return size, init_room, rooms, doors,traps,treasures, keys,items,enemies,stairs,start, expands
 
 def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=None):
     input=to_asp_format(input)
