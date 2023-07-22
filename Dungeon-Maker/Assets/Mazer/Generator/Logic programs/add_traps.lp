@@ -19,21 +19,15 @@
 %PART FIVE: TRAPS
 
 
+normal_room(R) :- room(R), not initial_room(R), not end_room(R).
 
 
 trap(0..(num_trap-1)).
 
-{trap_pos(T,R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- trap(T), room_size(R,XS,YS,XR,YR), room_pos(R,X,Y), X<XR, Y<YR.
+{trap_pos(T,R,X,Y,X,Y)} :- trap(T), normal_room(R), expand_pos(_,R,X,Y).
 
-not trap_pos(T,R,X,Y,PX,PY) :- trap(T), room_size(R,XS,YS,XR,YR), room_pos(R,X,Y), room_pos(R,PX,PY), PX=XR/2.
+:- trap_pos(T1,R,X,Y,_,_), trap_pos(T2,R,X,Y,_,_), T1!=T2.
 
-not trap_pos(T,R,X,Y,PX,PY) :- trap(T), room_size(R,XS,YS,XR,YR), room_pos(R,X,Y), room_pos(R,PX,PY), PY=YR/2.
+:- normal_room(R), room_size(R,_,_,XS,YS), {trap_pos(T,R,X,Y,TX,TY)}!=(XS+YS)/2.
 
-:- room_size(R,XS,YS,XR,YR),{trap_pos(T,R,X,Y,PX,PY)}!=XS.
-
-%:- S=#sum{XS,YS,RS : room_size(RS,XS,YS)}, {trap_pos(T,R,X,Y)}!=@rand(S/2,S).
-
-decoration(D,R,X,Y,PX,PY) :- trap_pos(D,R,X,Y,PX,PY).
-
-:-decoration(D1,R,X,Y,_,_), decoration(D2,R,X,Y,_,_), D1!=D2.
-
+decoration(T,R,X,Y,TX,TY) :- trap_pos(T,R,X,Y,TX,TY).

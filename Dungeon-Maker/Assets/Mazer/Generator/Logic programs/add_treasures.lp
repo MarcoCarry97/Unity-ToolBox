@@ -21,18 +21,13 @@ blind_room(R) :- room(R), #count{S : door(R,S,_)}=1.
 
 treasure(0..(num_treasure-1)).
 
-{treasure_pos(T,R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- treasure(T), blind_room(R), room_pos(R,X,Y), room_size(R,XS,YS,XR,YR), X<XR, Y<YR.
+{treasure_pos(T,R,X,Y,X,Y)} :- treasure(T), blind_room(R), expand_pos(_,R,X,Y).
 
-not treasure_pos(T,R,X,Y,PX,PY) :- treasure(T), room_size(R,XS,YS,XR,YR),room_pos(R,PX,PY), room_pos(R,X,Y), PX=XR/2.
+:- treasure_pos(T1,R,X,Y,_,_), treasure_pos(T2,R,X,Y,_,_), T1!=T2.
 
-not treasure_pos(T,R,X,Y,PX,PY) :- treasure(T), room_size(R,XS,YS,XR,YR),room_pos(R,PX,PY), room_pos(R,X,Y), PY=YR/2.
+:- blind_room(R), room_size(R,_,_,XS,YS), {treasure_pos(T,R,X,Y,TX,TY)}!=1.
 
-
-:- blind_room(R), #count{T,X,Y : treasure_pos(T,R,X,Y,PX,PY)}!=1.
-
-%:-{treasure_pos(T,R,X,Y)}!=num_treasure.
-
-decoration(D,R,X,Y,PX,PY) :- treasure_pos(D,R,X,Y,PX,PY).
+decoration(T,R,X,Y,TX,TY) :- treasure_pos(T,R,X,Y,TX,TY).
 
 :-decoration(D1,R,X,Y,_,_), decoration(D2,R,X,Y,_,_), D1!=D2.
 

@@ -254,8 +254,8 @@ public class DungeonMaker : MonoBehaviour
         for (int i = -halfSizeX; i <= halfSizeX; i++)
             for (int j = -halfSizeY; j <= halfSizeY; j++)
             {
-                int x = expansion.TrueCenter.X +center.X+ i;
-                int y = expansion.TrueCenter.Y +center.Y+ j;
+                int x = expansion.TrueCenter.X+ i;
+                int y = expansion.TrueCenter.Y+ j;
                 Vector3Int pos = new Vector3Int(x, y);
                 tilemap.SetTile(pos, tile, 0);
                 yield return new WaitForEndOfFrame();

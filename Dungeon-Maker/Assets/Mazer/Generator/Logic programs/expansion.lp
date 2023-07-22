@@ -47,10 +47,12 @@ place(max..(max+num_rooms*4-1)).
 :- place(P), #count{E,R : expansion(P,E,R)}<1.
 
 
-place_center(P,X,Y,X,Y) :- place(P), expansion(P,E,R), expand_center(E,R,X,Y).
+place_center(P,XC,YC,XC,YC) :- place(P), expansion(P,E,R), expand_center(E,R,X,Y), place_center(R,XR,YR,TX,TY), XC=X+TX, YC=Y+TY.
 
 place_size(P,X,Y,X,Y) :- place(P), expansion(P,E,R), expand_size(E,R,X,Y).
 
 
 
-room_pos(R,0..(X-1),0..(Y-1)) :-place_size(P,X,Y,_,_), expansion(P,E,R).
+expand_pos(E,R,0..(X-1),0..(Y-1)) :- expansion(_,E,R), expand_size(E,R,X,Y).
+
+expand_pos(-1,R,X,Y) :- room_pos(R,X,Y).
