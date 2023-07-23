@@ -13,7 +13,7 @@
 
 
 
-blind_room(R) :- room(R), #count{S : door(R,S,_)}=1.
+blind_room(R) :- normal_room(R), #count{S : door(R,S,_)}=1.
 
 
 

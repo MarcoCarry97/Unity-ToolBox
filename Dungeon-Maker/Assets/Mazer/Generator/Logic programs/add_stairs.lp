@@ -15,20 +15,25 @@
 
 %PART NINE: STAIRS
 
-{stairs(R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- end_room(R), room_pos(R,X,Y), room_size(R,XS,YS,XR,YR), X<XR, Y<YR.
-
-:-{stairs(R,X,Y,PX,PY)}!=1.
-
-:-stairs(R,_,_,PX,PY), decoration(D,R,_,_,PX,PY).
 
 
+{stairs(R,X,Y,X,Y)} :- end_room(R), expand_pos(_,R,X,Y).
+
+:-end_room(R), {stairs(R,X,Y,TX,TY)}!=1.
+
+decoration(-1,R,X,Y,TX,TY) :- stairs(R,X,Y,TX,TY).
 
 
-{start_point(R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- initial_room(R), room_pos(R,X,Y), room_size(R,XS,YS,XR,YR), X<XR, Y<YR.
 
-:-{start_point(R,X,Y,PX,PY)}!=1.
 
-:-start_point(R,_,_,PX,PY), decoration(D,R,_,_,PX,PY).
+
+{start_point(R,X,Y,X,Y)} :- initial_room(R), expand_pos(_,R,X,Y).
+
+:-initial_room(R), {start_point(R,X,Y,TX,TY)}!=1.
+
+decoration(-1,R,X,Y,TX,TY) :- stairs(R,X,Y,TX,TY).
+
+:-decoration(D1,R,X,Y,_,_), decoration(D2,R,X,Y,_,_), D1!=D2.
 
 %:-stairs(R,X,Y), decoration(D,R,X+1,Y).
 

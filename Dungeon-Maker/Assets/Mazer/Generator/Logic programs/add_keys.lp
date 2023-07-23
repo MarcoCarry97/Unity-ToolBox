@@ -17,12 +17,15 @@
 %PART SIX: TREASURES & KEYS
 key(0..(num_treasure-1)).
 
-{key_pos(T,R,X,Y,@rand_dec(X,XS,XR+1),@rand_dec(Y,YS,YR+1))} :- key(T), not blind_room(R), room_pos(R,X,Y), room_size(R,XS,YS,XR,YR), X<XR, Y<YR.
+{key_pos(T,R,X,Y,X,Y)} :- key(T), normal_room(R), not blind_room(R), expand_pos(_,R,X,Y).
 
-decoration(D,R,X,Y,PX,PY) :- key_pos(D,R,X,Y,PX,PY).
+:- key_pos(T1,R,X,Y,_,_), key_pos(T2,R,X,Y,_,_), T1!=T2.
+
+:- normal_room(R), not blind_room(R), room_size(R,_,_,XS,YS), {key_pos(T,R,X,Y,TX,TY)}!=1.
+
+decoration(T,R,X,Y,TX,TY) :- key_pos(T,R,X,Y,TX,TY).
 
 :-decoration(D1,R,X,Y,_,_), decoration(D2,R,X,Y,_,_), D1!=D2.
-
 
 
 

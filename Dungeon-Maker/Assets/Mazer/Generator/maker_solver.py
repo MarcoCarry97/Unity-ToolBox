@@ -31,7 +31,7 @@ class maker_solver:
         #files=["assign_size.lp","create_rooms.lp","create_doors.lp","autocomplete.lp","add_traps.lp", "add_treasures.lp","add_keys.lp", "add_items.lp", "initial_end.lp","add_stairs.lp"]
         #files=["assign_size.lp","create_rooms.lp","create_doors.lp","autocomplete.lp","initial_end.lp"]
         #files=["assign_size.lp","rooms_doors.lp", "initial_end.lp","add_traps.lp", "add_treasures.lp","add_keys.lp", "add_items.lp","enemy_spawn.lp","initial_end.lp","add_stairs.lp"]
-        files = ["assign_size.lp", "rooms_doors.lp","expansion.lp","initial_end.lp","add_traps.lp","add_treasures.lp"]
+        files = ["assign_size.lp", "rooms_doors.lp","expansion.lp","initial_end.lp", "add_stairs.lp", "add_traps.lp","add_treasures.lp", "add_keys.lp","add_items.lp","enemy_spawn.lp"]
         incomplete_models=[]
         for i in range(0,num_levels):
             levels, status, _ = method_utils.single_model_solving("", create_points,num_levels, num_rooms, size,distance, path,space,num_trap, num_treasure, num_item, rand_init,corr_size,num_enemy,previous=incomplete_models)
