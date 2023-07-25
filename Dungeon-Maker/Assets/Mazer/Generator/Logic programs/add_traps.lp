@@ -24,7 +24,7 @@ normal_room(R) :- room(R), not initial_room(R), not end_room(R).
 
 trap(0..(num_trap-1)).
 
-{trap_pos(T,R,X,Y,X,Y)} :- trap(T), normal_room(R), expand_pos(_,R,X,Y).
+{trap_pos(T,R,X,Y,@rand_dec(X,XS,XR),@rand_dec(Y,YS,YR))} :- trap(T), normal_room(R), place_size(R,XS,YS,XR,YR), room_pos(R,X,Y).
 
 :- trap_pos(T1,R,X,Y,_,_), trap_pos(T2,R,X,Y,_,_), T1!=T2.
 

@@ -21,7 +21,7 @@ blind_room(R) :- normal_room(R), #count{S : door(R,S,_)}=1.
 
 treasure(0..(num_treasure-1)).
 
-{treasure_pos(T,R,X,Y,X,Y)} :- treasure(T), blind_room(R), expand_pos(_,R,X,Y).
+{treasure_pos(T,R,X,Y,@rand_dec(X,XS,XR),@rand_dec(Y,YS,YR))} :- treasure(T), blind_room(R), place_size(R,XS,YS,XR,YR), room_pos(R,X,Y).
 
 :- treasure_pos(T1,R,X,Y,_,_), treasure_pos(T2,R,X,Y,_,_), T1!=T2.
 

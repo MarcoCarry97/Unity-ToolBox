@@ -228,8 +228,8 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
     models=to_model_list(handle)
     if (len(models)==0):
         raise Exception("This logic program cannot generate stable models")
-    #res=get_rand_models(models,num_levels)
-    res=get_distant_models(models,previous,num_levels,filename)
+    res=get_rand_models(models,num_levels)
+    #res=get_distant_models(models,previous,num_levels,filename)
 
     return res, handle.get(), previous
 

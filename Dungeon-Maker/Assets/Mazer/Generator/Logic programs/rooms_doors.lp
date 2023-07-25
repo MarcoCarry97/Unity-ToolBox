@@ -87,8 +87,6 @@ path(P1,P2,N) :- path(P2,P1,N).
 
 path(P1,P2,N) :- place_center(P3,_,_,_,_), door(P1,P3,_), N<max, path(P3,P2,N-1).
 
-max/2 { path(0..(num_rooms-1),(0..(num_rooms-1),1..(max-1)))} max/2.
-
 :-place_center(I,_,_,_,_), place_center(E,_,_,_,_), not path(I,E,_).
 
 %:- room(R1), room(R2), path(R1,R2,N), N<max_path/2.

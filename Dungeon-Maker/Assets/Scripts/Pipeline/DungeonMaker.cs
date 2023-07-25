@@ -266,9 +266,11 @@ public class DungeonMaker : MonoBehaviour
     {
         foreach(DecorationData dec in level.GetDecorationsOfRoom(room))
         {
-            int x = dec.Position.X + room.TrueCenter.X - room.Size.X / 2;
-            int y = dec.Position.Y + room.TrueCenter.Y - room.Size.Y / 2;
-            Vector3Int pos=new Vector3Int(x,y);
+            int x = dec.Position.X;
+            int y = dec.Position.Y;
+            //int x = dec.Position.X;
+            //int y = dec.Position.Y;
+            Vector3Int pos =new Vector3Int(x,y);
             string type = dec.Type;
             Tile typeTile;
             if (type.Equals("trap"))

@@ -17,7 +17,7 @@
 %PART SIX: TREASURES & KEYS
 key(0..(num_treasure-1)).
 
-{key_pos(T,R,X,Y,X,Y)} :- key(T), normal_room(R), not blind_room(R), expand_pos(_,R,X,Y).
+{key_pos(T,R,X,Y,@rand_dec(X,XS,XR),@rand_dec(Y,YS,YR))} :- key(T), room(R), not blind_room(R), place_size(R,XS,YS,XR,YR), room_pos(R,X,Y).
 
 :- key_pos(T1,R,X,Y,_,_), key_pos(T2,R,X,Y,_,_), T1!=T2.
 

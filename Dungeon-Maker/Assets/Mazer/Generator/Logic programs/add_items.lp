@@ -17,11 +17,11 @@
 
 item(0..(num_item-1)).
 
-{item_pos(T,R,X,Y,X,Y)} :- item(T), normal_room(R), expand_pos(_,R,X,Y).
+{item_pos(T,R,X,Y,@rand_dec(X,XS,XR),@rand_dec(Y,YS,YR))} :- item(T), room(R), place_size(R,XS,YS,XR,YR), room_pos(R,X,Y).
 
 :- item_pos(T1,R,X,Y,_,_), item_pos(T2,R,X,Y,_,_), T1!=T2.
 
-:- normal_room(R), room_size(R,_,_,XS,YS), {item_pos(T,R,X,Y,TX,TY)}!=1.
+:- room(R), room_size(R,_,_,XS,YS), {item_pos(T,R,X,Y,TX,TY)}!=num_item.
 
 decoration(T,R,X,Y,TX,TY) :- item_pos(T,R,X,Y,TX,TY).
 

@@ -609,7 +609,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 371614812}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -7.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1081,7 +1081,7 @@ MonoBehaviour:
   numEnemiesSpawnPoints: 0
   randomStart: 1
   tile: {fileID: 11400000, guid: 0ea833c86fedd814db3538095d88f56e, type: 2}
-  trapTile: {fileID: 11400000, guid: 4e24a674490620c4eb878a731a865d91, type: 2}
+  trapTile: {fileID: 11400000, guid: 239cddbc0f5a67f4fa92e6d532e324d2, type: 2}
   stairsTile: {fileID: 11400000, guid: 5b1834ec8bad8404d859e5301c7a475d, type: 2}
   treasurePrefab: {fileID: 11400000, guid: eff74f5df34bd6347a7657a19e0f045b, type: 2}
   keyPrefab: {fileID: 11400000, guid: 14094af5889f615408ade3ec7a7f69b6, type: 2}
