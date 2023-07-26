@@ -109,8 +109,8 @@ def create_stairs_dict(stairs):
     stairs=stairs.replace(")","")
     parts=stairs.split(",")
     pos_dict = dict()
-    pos_dict["x"] = int(parts[1])
-    pos_dict["y"] = int(parts[2])
+    pos_dict["x"] = int(parts[3])
+    pos_dict["y"] = int(parts[4])
     stairs_dict["room"]=int(parts[0])
     stairs_dict["position"]=pos_dict
     return stairs_dict
@@ -121,8 +121,8 @@ def create_start_dict(start):
     start=start.replace(")","")
     parts=start.split(",")
     pos_dict = dict()
-    pos_dict["x"] = int(parts[1])
-    pos_dict["y"] = int(parts[2])
+    pos_dict["x"] = int(parts[3])
+    pos_dict["y"] = int(parts[4])
     start_dict["room"]=int(parts[0])
     start_dict["position"]=pos_dict
     return start_dict
@@ -151,9 +151,9 @@ def create_model_dict(model):
     model_dict["decorations"]+=create_decoration_dict(items,"item")
     model_dict["decorations"]+=create_decoration_dict(enemies,"enemy")
     if(stairs!=None):
-        model_dict["stairs"]=create_stairs_dict(stairs)
+        model_dict["stairs"]=create_decoration_dict([stairs],"stairs")[0]
     if (stairs != None):
-        model_dict["start_point"] = create_start_dict(start)
+        model_dict["startpoint"] = create_decoration_dict([start],"start_point")[0]
     for room in rooms:
         room_dict=create_room_dict(room,size_list,expands_list)
         model_dict["rooms"]+=[room_dict]
@@ -196,9 +196,9 @@ def divide_list(lis):
             keys+= [literal]
         elif (parts[0] == "item_pos"):
             items = [literal]
-        elif (parts[0] == "stairs"):
+        elif (parts[0] == "stairs_pos"):
             stairs = literal
-        elif (parts[0] == "start_point"):
+        elif (parts[0] == "start_point_pos"):
             start = literal
         elif (parts[0] == "enemy_pos"):
             enemies+=[literal]

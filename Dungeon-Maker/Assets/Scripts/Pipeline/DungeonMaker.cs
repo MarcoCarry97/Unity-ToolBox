@@ -152,6 +152,7 @@ public class DungeonMaker : MonoBehaviour
         int x = initRoom.Center.X;
         int y = initRoom.Center.Y;
         yield return RecursiveBuild(level, initRoom, x, y, visited);
+        yield return DrawStairs(level);
     }
 
     private int GetSize(LevelData level)
@@ -304,6 +305,14 @@ public class DungeonMaker : MonoBehaviour
                     AddTile(tile, i, start.Center.Y + j - corridorSize / 2);
                     yield return new WaitForEndOfFrame();
                 }
+    }
+
+    private IEnumerator DrawStairs(LevelData level)
+    {
+        Vector3Int pos = new Vector3Int(level.Stairs.Position.X,level.Stairs.Position.Y, 0);
+        print("Stairs: " + pos);
+        tilemap.SetTile(pos, stairsTile, 1);
+        yield return new WaitForEndOfFrame();
     }
 
     private void AddTile(RuleTile tile, int x, int y)

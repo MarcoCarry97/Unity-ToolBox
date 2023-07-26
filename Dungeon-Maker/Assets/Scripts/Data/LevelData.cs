@@ -19,11 +19,18 @@ public class LevelData : ScriptableObject
     [SerializeField]
     private List<DecorationData> decorations;
 
+    private DecorationData stairs;
+
+    private DecorationData startPoint;
+
     public int Init_Room{ get { return init_room; } set { init_room = value; } }
     public List<RoomData> Rooms { get { return rooms; } set { rooms = value; } }
     public List<DoorData> Doors { get { return doors; } set { doors = value; } }
 
     public List<DecorationData> Decorations { get { return decorations; } set { decorations = value; } }
+
+    public DecorationData StartPoint{ get { return startPoint; } set { startPoint = value; } }
+    public DecorationData Stairs{ get { return stairs; } set { stairs = value; } }
 
     public List<DoorData> GetDoorsOfRoom(RoomData room)
     {
