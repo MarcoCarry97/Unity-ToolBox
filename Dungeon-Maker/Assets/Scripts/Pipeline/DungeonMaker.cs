@@ -16,25 +16,37 @@ public class DungeonMaker : MonoBehaviour
     [SerializeField]
     private int numLevels;
 
+    public int NumberOfLevels { get { return numLevels; } }
+
     [Range(1,10)]
     [SerializeField]
     private int numRooms;
+
+    public int NumberOfRoomsPerLevel { get { return numRooms; } }
 
     [Range(3,10)]
     [SerializeField]
     private int maxRoomSize;
 
+    public int MaxRoomSize { get { return maxRoomSize; } }
+
     [Range(1, 5)]
     [SerializeField]
     private int corridorSize;
+
+    public int CorridorSize { get { return corridorSize; } }
 
     [Range(1,50)]
     [SerializeField]
     private int distanceBetweenRooms;
 
+    public int DistanceBetweenRooms { get { return distanceBetweenRooms; } }
+
     [Range(1,10)]
     [SerializeField]
     private int maxPathLength;
+
+    public int MaxPathLength { get { return maxPathLength; } }
 
     [Range(0, 10)]
     [SerializeField]
@@ -43,7 +55,9 @@ public class DungeonMaker : MonoBehaviour
     [Range(1, 1000)]
     [SerializeField]
     private int spaceSize;
-    
+
+    public int SpaceSize { get { return spaceSize; } }
+
     [Range(0,10)]
     [SerializeField]
     private int numTraps;
@@ -51,6 +65,8 @@ public class DungeonMaker : MonoBehaviour
     [Range(0, 10)]
     [SerializeField]
     private int numItems;
+
+    public int NumberOfItemsPerRoom { get { return numLevels; } }
 
     [SerializeField]
     [Range(0, 10)]
@@ -80,6 +96,8 @@ public class DungeonMaker : MonoBehaviour
 
     [SerializeField]
     private Tile enemySpawnTile;
+
+    public World World { get { return tilemap; } set { tilemap = value; } }
 
     public IEnumerator Generate()
     {
@@ -173,7 +191,7 @@ public class DungeonMaker : MonoBehaviour
 
     private void Start()
     {
-        tilemap=GameObject.FindAnyObjectByType<World>();
+       // tilemap=GameObject.FindAnyObjectByType<World>();
     }
 
     private int GetMaxRoomSize(DungeonData data, int index)

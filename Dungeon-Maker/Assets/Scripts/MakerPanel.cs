@@ -10,7 +10,7 @@ public class MakerPanel : MonoBehaviour
     private Button previousButton;
     private Button nextButton;
 
-    private DungeonMaker maker;
+    private MapInstantiator map;
 
     private int current;
 
@@ -24,13 +24,13 @@ public class MakerPanel : MonoBehaviour
         previousButton.onClick.AddListener(OnPrevious);
         nextButton.onClick.AddListener(OnNext);
 
-        maker=GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>();
+        map=GameObject.Find("MapInstantiator").GetComponent<MapInstantiator>();
         current = 0;
     }
 
     private void OnGenerate()
     {
-        StartCoroutine(maker.Generate());
+        StartCoroutine(map.Compose());
         //maker.Generate();
         current = 0;
     }
@@ -40,18 +40,18 @@ public class MakerPanel : MonoBehaviour
         current--;
         if (current < 0)
             current = 0;
-        StartCoroutine(maker.Build(current));
+        //StartCoroutine(maker.Build(current));
     }
 
     private void OnNext()
     {
-        current=(current+1)%maker.Dungeon.Levels.Count;
-        StartCoroutine(maker.Build(current));
+        //current=(current+1)%maker.Dungeon.Levels.Count;
+        //StartCoroutine(maker.Build(current));
     }
 
     private IEnumerator BuildCoroutine()
     {
-        maker.Build(current);
+        //maker.Build(current);
         yield return null;
     }
 }

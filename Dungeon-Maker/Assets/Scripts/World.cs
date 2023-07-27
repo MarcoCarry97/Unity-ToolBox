@@ -25,6 +25,7 @@ public class World : MonoBehaviour
 
     public void ClearAllTiles()
     {
+        print("Base: " + baseMap);
         int halfSize = Size / 2;
         for (int i = -halfSize; i <= halfSize; i++)
             for (int j = -halfSize; j <= halfSize; j++)

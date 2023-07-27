@@ -15,7 +15,8 @@
 
 
 
-room_pos(R,(XC-XS/2+1)..(XC+XS/2-1), (YC-YS/2+1)..(YC+YS/2)-1) :- place_center(R,_,_,XC,YC), place_size(R,_,_,XS,YS).
+room_pos(R,(XC-XS/2+1)..(XC+XS/2-1), (YC-YS/2+1)..(YC+YS/2)-1) :-
+    place_center(R,_,_,XC,YC), place_size(R,_,_,XS,YS).
 
 
 

@@ -45,7 +45,7 @@ class maker_solver:
             for file in files:
                 #print("File: "+file)
                 #print("Input: "+input)
-                input, status, _ = method_utils.single_model_solving(input, file, 1, num_rooms, size, distance, path,space, num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=previouses)
+                input, status, _ = method_utils.single_model_solving(input, file, 1, num_rooms, size, distance, path,1, num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=previouses)
                 #print("Output: " + input)
             previouses+=[input]
             model_dict=method_utils.create_model_dict(input)
@@ -83,7 +83,7 @@ class timed_solver:
                 start = time.time()
                 print("File: "+file)
                 #print("Input: "+input)
-                input, status, _ = method_utils.single_model_solving(input, file, 1, num_rooms, size, distance, path,space, num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=previouses)
+                input, status, _ = method_utils.single_model_solving(input, file, 1, num_rooms, size, distance, path,1, num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=previouses)
                 end = time.time()
                 print("Time of " + file + ": " + str(end - start) + " s")
             print("\n")

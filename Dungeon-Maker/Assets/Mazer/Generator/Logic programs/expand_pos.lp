@@ -20,4 +20,5 @@
 
 
 
-room_pos(R,(XC-XS/2+1)..(XC+XS/2-1), (YC-YS/2+1)..(YC+YS/2-1)) :- expand_center(E,R,XC,YC,_,_), expand_size(E,R,XS,YS,_,_).
+room_pos(R,(XC-XS/2+1)..(XC+XS/2-1), (YC-YS/2+1)..(YC+YS/2-1)) :-
+    expand_center(E,R,XC,YC,_,_), expand_size(E,R,XS,YS,_,_).
