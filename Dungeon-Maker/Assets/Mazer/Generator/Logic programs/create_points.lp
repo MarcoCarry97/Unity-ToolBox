@@ -30,7 +30,7 @@ delta(S,X,Y) :- opposite(S,T), delta(T,-X,-Y).
 
 num(N) :- N=(-max..max)*distance.
 
-point(0,0).
+point(x_start,y_start).
 
 {point(X,Y)} :- num(X), num(Y), point(XS,YS), delta(_,X-XS,Y-YS).
 

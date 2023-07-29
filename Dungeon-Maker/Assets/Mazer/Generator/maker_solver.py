@@ -29,9 +29,12 @@ class maker_solver:
     def solve(self, num_levels, num_rooms, size, distance,path,space,num_trap,num_treasure,num_item,rand_init,corr_size,num_enemy):
        points=method_utils.get_models("","create_points.lp", num_levels, num_rooms, size, distance,path,space,num_trap,num_treasure,num_item,rand_init,corr_size,num_enemy)
        beginning_files=["assign_size.lp","rooms_doors.lp"]
+       #print(len(points))
        incomplete_models=method_utils.get_models_from_more_files(points,beginning_files, num_levels, num_rooms, size, distance,path,space,num_trap,num_treasure,num_item,rand_init,corr_size,num_enemy)
+       #print(len(incomplete_models))
        last_files=["positions.lp", "expansion.lp","expand_pos.lp","initial_end.lp", "add_stairs.lp", "add_traps.lp","add_treasures.lp", "add_keys.lp","add_items.lp","enemy_spawn.lp"]
        res=method_utils.get_models_from_more_files(incomplete_models,last_files, 1, num_rooms, size, distance,path,1,num_trap,num_treasure,num_item,rand_init,corr_size,num_enemy)
+       #print(len(res))
        dicts=[]
        for model in res:
            dicts+=[method_utils.create_model_dict(model)]

@@ -210,11 +210,13 @@ def divide_list(lis):
 def get_models(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy):
     models=[]
     for i in range(0,num_levels):
-        levels, status, _ = single_model_solving(input, filename, 1, num_rooms, size, distance, path, space,
+        levels, status, _ = single_model_solving(input, filename,num_levels, num_rooms, size, distance, path, space,
                                                  num_trap, num_treasure, num_item, rand_init, corr_size, num_enemy,
                                                  previous=models)
-        models+=[levels[0]]
-    return levels
+        models += [get_rand_models(levels, 1)[0]]
+        #print(filename+" "+str(len(levels))+" "+str(len(models)))
+
+    return models
 
 def get_models_from_more_files(inputs,files,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy):
     models=[]
@@ -233,6 +235,16 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
 
     file = open("Logic programs/"+filename)
     program = input+file.read()
+    x_start=0
+    y_start=0
+    if(rand_init):
+        max = num_rooms * 2
+        random.seed=random.randrange(-max+1,max-1)
+        xrand=random.randrange(-max+1,max-1)
+        yrand=random.randrange(-max+1,max-1)
+        x_start=xrand*distance
+        y_start=yrand*distance
+        #print(str(x_start)+" "+str(y_start))
     args=["--model="+str(num_levels*space),
           "-c num_rooms="+str(num_rooms),
           "-c max_size="+str(size),
@@ -242,7 +254,9 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
           "-c num_treasure="+str(num_treasure),
           "-c num_item="+str(num_item),
           "-c corr_dim="+str(corr_size),
-          "-c num_enemy="+str(num_enemy)]
+          "-c num_enemy="+str(num_enemy),
+          "-c x_start="+str(x_start),
+          "-c y_start="+str(y_start)]
     control = clingo.Control(arguments=args)
     control.add("base", [], program)
     context=mazer_context()
