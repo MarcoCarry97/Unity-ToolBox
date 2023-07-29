@@ -37,3 +37,9 @@ class mazer_context:
         rand_num=random.randrange(-nmax//2,nmax//2+1)
         return clingo.Number((nval+rand_num)%rval_num)
 
+    def rand_point(self,max,distance):
+        nmax=max.number
+        ndist=distance.number
+        lis=list(range(-nmax,nmax+1))
+        rand_index=random.randrange(0,len(lis))
+        return clingo.Number(lis[rand_index]*ndist)

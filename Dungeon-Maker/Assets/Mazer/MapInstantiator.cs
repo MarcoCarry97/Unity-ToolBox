@@ -13,17 +13,16 @@ public class MapInstantiator : MonoBehaviour
     public IEnumerator Compose()
     {
         World lastWorld= null;
-        for (int i = 0; i < maker.NumberOfLevels; i++)
+        yield return StartCoroutine(maker.Generate());
+        foreach(LevelData level in maker.Dungeon.Levels)
         {
             World world=Instantiate(worldPrefab).GetComponent<World>();
             yield return new WaitForEndOfFrame();
-            print("World: "+world);
             maker.World = world;
-            yield return StartCoroutine(maker.Generate());
-            yield return StartCoroutine(maker.Build(i));
-            if(lastWorld!=null)
-                world.transform.position = lastWorld.transform.position+new Vector3(5,0,0);
+            if (lastWorld != null)
+                world.transform.position = lastWorld.transform.position + Vector3.right * 300;
             lastWorld = world;
+            yield return StartCoroutine(maker.Build(level));
         }
 
     }

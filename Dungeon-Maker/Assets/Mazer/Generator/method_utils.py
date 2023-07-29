@@ -206,8 +206,31 @@ def divide_list(lis):
             expands+=[literal]
     return size, init_room, rooms, doors,traps,treasures, keys,items,enemies,stairs,start, expands
 
+
+def get_models(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy):
+    models=[]
+    for i in range(0,num_levels):
+        levels, status, _ = single_model_solving(input, filename, 1, num_rooms, size, distance, path, space,
+                                                 num_trap, num_treasure, num_item, rand_init, corr_size, num_enemy,
+                                                 previous=models)
+        models+=[levels[0]]
+    return levels
+
+def get_models_from_more_files(inputs,files,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy):
+    models=[]
+    for input in inputs:
+        for file in files:
+            #print(file)
+            #print(input)
+            res = get_models(input, file, 1, num_rooms, size, distance, path, space, num_trap, num_treasure,
+                             num_item, rand_init, corr_size, num_enemy)
+            input=get_rand_models(res,1)[0]
+        models+=[input]
+    return models
+
 def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=None):
     input=to_asp_format(input)
+
     file = open("Logic programs/"+filename)
     program = input+file.read()
     args=["--model="+str(num_levels*space),
@@ -226,13 +249,10 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
     control.ground([("base", [])], context=context)
     handle=control.solve(yield_=True)
     models=to_model_list(handle)
+
     if (len(models)==0):
         raise Exception("This logic program cannot generate stable models")
-    elif(len(models)==1):
-        res=models[0]
-    else:
-        #res = get_rand_models(models, num_levels)
-        res=get_distant_models(models,previous,num_levels,filename)
+    res= get_distant_models(models,previous,num_levels,filename)
 
     return res, handle.get(), previous
 
@@ -340,18 +360,16 @@ def get_rand_models(models,size):
     for i in range(0,size):
         num=random_formula(num,len(models))
         res+=[models[num]]
-    if size==1:
-        return res[0]
-    else:
-        return res
+    return res
 
 
 def get_distant_models(models, previouses,size, file):
     res=[]
+
     measurements=get_measure_functions(file)
     for i in range(0,size):
-        if(len(previouses)==0):
-            res+=[get_rand_models(models,1)]
+        if (len(previouses) == 0):
+            res += [get_rand_models(models, 1)[0]]
         else:
             for model in models:
                 distance=0
@@ -359,15 +377,12 @@ def get_distant_models(models, previouses,size, file):
                 for prev in previouses:
                     dist=0
                     for measurement in measurements:
-                        dist+=measurement(model,prev)/len(previouses)
-                if(distance<dist):
-                    best=model
-                    distance=dist
-            if(best!=None):
-                res += [best]
-                models.remove(best)
-    if(size==1):
-        return res[0]
-    else:
-        return res
+                        dist+=measurement(model,prev)
+                    if(distance<=dist):
+                        best=model
+                        distance=dist
+                if(best!=None):
+                    res += [best]
+                    models.remove(best)
+    return res
 

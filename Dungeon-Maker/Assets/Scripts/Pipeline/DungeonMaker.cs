@@ -120,9 +120,11 @@ public class DungeonMaker : MonoBehaviour
         string error = process.ReadStandardError();
         if (!error.Equals(""))
             UnityEngine.Debug.LogError(error);
+        print(result);
         DungeonData dungeon = JsonConvert.DeserializeObject<DungeonData>(result);
         Dungeon = dungeon;
-        yield return (Build(0));
+        yield break;
+        //yield return (Build(0));
     }
 
 
@@ -161,8 +163,13 @@ public class DungeonMaker : MonoBehaviour
 
     public IEnumerator Build(int index)
     {
-        List<RoomData> visited = new List<RoomData>();
         LevelData level = Dungeon.Levels[index];
+        return Build(level);
+    }
+
+    public IEnumerator Build(LevelData level)
+    {
+        List<RoomData> visited = new List<RoomData>();
         tilemap.Size = GetSize(level);
         tilemap.ClearAllTiles();
         yield return new WaitForEndOfFrame();
@@ -231,9 +238,9 @@ public class DungeonMaker : MonoBehaviour
     {
         if (!visited.Contains(room))
         {
-            print("Room: " + room.Id);
+            //print("Room: " + room.Id);
             visited.Add(room);
-            StartCoroutine(DrawRoomTiles(room, level));
+            yield return StartCoroutine(DrawRoomTiles(room, level));
             foreach (DoorData door in level.GetDoorsOfRoom(room))
             {
                 yield return StartCoroutine(DrawCorridorTiles(level, door));
@@ -241,7 +248,7 @@ public class DungeonMaker : MonoBehaviour
                 int upX = up.Item1;
                 int upY = up.Item2;
                 RoomData dest = level.GetRoom(door.End);
-                StartCoroutine(RecursiveBuild(level, dest, x + upX, y + upY, visited));
+                yield return StartCoroutine(RecursiveBuild(level, dest, x + upX, y + upY, visited));
             }
         }
     }
