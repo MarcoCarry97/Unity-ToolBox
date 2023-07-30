@@ -362,9 +362,9 @@ def door_distance(current_level,previous):
 def get_measure_functions(file):
     lis = [count_distance]
     if file=="rooms_doors.lp":
-        lis=[center_distance,door_distance]
+        lis+=[center_distance,door_distance]
     if file=="assign_size.lp":
-        lis=[size_distance]
+        lis+=[size_distance]
     return lis
 
 
