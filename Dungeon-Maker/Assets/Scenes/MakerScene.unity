@@ -328,6 +328,7 @@ GameObject:
   m_Component:
   - component: {fileID: 812372173}
   - component: {fileID: 812372172}
+  - component: {fileID: 812372174}
   m_Layer: 0
   m_Name: DungeonMaker
   m_TagString: Untagged
@@ -342,7 +343,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 812372171}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 741f50bfb8627a74eaaa2603989f8ac9, type: 3}
   m_Name: 
@@ -380,6 +381,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &812372174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812372171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c4651a618faa84da5fd7ec2615442f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numLevels: 5
+  numRooms: 7
+  maxRoomSize: 10
+  corridorSize: 3
+  distanceBetweenRooms: 8
+  maxPathLength: 5
+  numTreasures: 5
+  spaceSize: 100
+  numTraps: 5
+  numItems: 5
+  numEnemiesSpawnPoints: 5
+  randomStart: 1
+  tile: {fileID: 11400000, guid: 0ea833c86fedd814db3538095d88f56e, type: 2}
+  trapTile: {fileID: 11400000, guid: 239cddbc0f5a67f4fa92e6d532e324d2, type: 2}
+  stairsTile: {fileID: 11400000, guid: 5b1834ec8bad8404d859e5301c7a475d, type: 2}
+  treasurePrefab: {fileID: 11400000, guid: eff74f5df34bd6347a7657a19e0f045b, type: 2}
+  keyPrefab: {fileID: 11400000, guid: 14094af5889f615408ade3ec7a7f69b6, type: 2}
+  enemySpawnTile: {fileID: 11400000, guid: 0a6471337a5a8624bb939f7def02bc1e, type: 2}
+  phases:
+  - create_points.lp
 --- !u!1 &943235002
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,7 +904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 264d628adc18ad24da792004bbd8ec9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maker: {fileID: 812372172}
+  maker: {fileID: 812372174}
   worldPrefab: {fileID: 3134561437149409238, guid: 558ee123ca3d0154d8b516b8411064d4,
     type: 3}
 --- !u!4 &1634864927

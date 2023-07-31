@@ -7,8 +7,13 @@ using Mazer.Data;
 
 public class MapInstantiator : MonoBehaviour
 {
+    /// <summary>
+    /// /private DungeonMaker maker;
+    /// </summary>
+    /// 
+
     [SerializeField]
-    private DungeonMaker maker;
+    private ClingoMazer maker;
 
     [SerializeField]
     private World worldPrefab;
