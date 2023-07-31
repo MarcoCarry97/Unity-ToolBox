@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using Mazer.Generators;
+using Mazer.Data;
 
 public class MapInstantiator : MonoBehaviour
 {
@@ -19,8 +22,9 @@ public class MapInstantiator : MonoBehaviour
             World world=Instantiate(worldPrefab).GetComponent<World>();
             yield return new WaitForEndOfFrame();
             maker.World = world;
+            Vector3 vecToCenter = new Vector3(level.GetRoom(level.Init_Room).TrueCenter.X, level.GetRoom(level.Init_Room).TrueCenter.Y, 0);
             if (lastWorld != null)
-                world.transform.position = lastWorld.transform.position + Vector3.right * 300;
+                world.transform.position = lastWorld.transform.position + Vector3.right * 300 - vecToCenter;
             lastWorld = world;
             yield return StartCoroutine(maker.Build(level));
         }
