@@ -131,7 +131,7 @@ namespace Mazer.Generators
             print(path);
             InputProgram program = new ASPInputProgram();
             program.AddProgram(input + ReadFile(path));
-            program.AddProgram("point(0,0).");
+            //program.AddProgram("point(0,0).");
             print(program.Programs);
             handler.AddProgram(program);
             
@@ -147,30 +147,67 @@ namespace Mazer.Generators
             string cont = "";
             while(!sr.EndOfStream)
             {
-                cont += sr.ReadLine();
+                cont += sr.ReadLine()+"\n";
             }
             sr.Close();
             return cont;
         }
 
-        public List<OptionDescriptor> GetArgs()
+        private List<OptionDescriptor> GetArgs()
         {
             List<OptionDescriptor> options = new List<OptionDescriptor>();
             if (maxRoomSize <= corridorSize)
                 maxRoomSize = corridorSize + 3;
-            options.Add(new OptionDescriptor($"-c num_rooms={numRooms}"));
-            options.Add(new OptionDescriptor($"-c max_size={maxRoomSize}"));
-            options.Add(new OptionDescriptor($"-c corr_dim={corridorSize}"));
-            options.Add(new OptionDescriptor($"-c distance={distanceBetweenRooms}"));
-            options.Add(new OptionDescriptor($"-c num_trap={numTraps}"));
-            options.Add(new OptionDescriptor($"-c num_treasure={numTreasures}"));
-            options.Add(new OptionDescriptor($"-c num_item={numItems}"));
-            options.Add(new OptionDescriptor($"--models={spaceSize}"));
-            options.Add(new OptionDescriptor($"-c x_start=0"));
-            options.Add(new OptionDescriptor($"-c y_start=0"));
+            int xStart = 0, yStart=0;
             if(randomStart)
-                options.Add(new OptionDescriptor($"--models={spaceSize}"));
+            {
+                xStart=UnityEngine.Random.Range(-numRooms*2+1,numRooms*2-1)*distanceBetweenRooms;
+                yStart=UnityEngine.Random.Range(-numRooms*2+1,numRooms*2-1)*distanceBetweenRooms;
+                
+            }
+            //Options
+            options.Add(CreateOption("--models", "=", spaceSize));
+            options.Add(CreateOption("--verbose","=",1));
+            options.Add(CreateOption("--quiet","=",1));
+            options.Add(CreateOption("--outf","=",2));
+            //options.Add(CreateOption("--text"));
+            //options.Add(CreateOption("--lparse-rewrite"));
+            //options.Add(CreateOption("--ilearnt","=","forget"));
+            //options.Add(CreateOption("--iheuristic","=","forget"));
+            //options.Add(CreateOption("--stats"));
+            //options.Add(CreateOption("--quiet"));
+            //options.Add(CreateOption("--seed", "=", UnityEngine.Random.Range(-numRooms * 2 + 1, numRooms * 2 - 1)));
+
+            //Constants
+            options.Add(CreateOption("-c num_rooms","=", numRooms));
+            options.Add(CreateOption("-c max_size", "=", maxRoomSize));
+            options.Add(CreateOption("-c corr_dim", "=", corridorSize));
+            options.Add(CreateOption("-c distance", "=", distanceBetweenRooms));
+            options.Add(CreateOption("-c num_trap", "=", numTraps));
+            options.Add(CreateOption("-c num_treasure", "=", numTreasures));
+            options.Add(CreateOption("-c num_item", "=", numItems));
+            options.Add(CreateOption("-c x_start","=", xStart));
+            options.Add(CreateOption("-c y_start","=", yStart));
+
             return options;
+        }
+
+        private OptionDescriptor CreateOption(string name,string separator, object value)
+        {
+            OptionDescriptor option = new OptionDescriptor();
+            option.Separator = " ";
+            if (value != null)
+                option.AddOption($"{name}{separator}{value.ToString()}");
+            else option.AddOption($"{name}");
+            return option;
+        }
+
+        private OptionDescriptor CreateOption(string name)
+        {
+            OptionDescriptor option = new OptionDescriptor();
+            option.Separator =null;
+            option.AddOption (name);
+            return option;
         }
 
         /*public void Build(int index)
