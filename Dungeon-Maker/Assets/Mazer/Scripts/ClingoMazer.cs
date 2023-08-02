@@ -1,9 +1,13 @@
+
+//using BonaJson;
+using Newtonsoft.Json.Linq;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using it.unical.mat.embasp.platforms.desktop;
 using it.unical.mat.embasp.specializations.clingo.desktop;
 using Mazer.Data;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,11 +19,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
+using Mazer.Utils;
 
 namespace Mazer.Generators
 {
     public class ClingoMazer : MonoBehaviour, IMazer
     {
+
         [Range(2, 100)]
         [SerializeField]
         private int numLevels;
@@ -106,26 +112,63 @@ namespace Mazer.Generators
         private Tile enemySpawnTile;
 
         [SerializeField]
-        private List<string> phases;
+        private string firstPhase;
+
+        [SerializeField]
+        private List<string> beginPhases;
+
+        [SerializeField]
+        private List<string> lastPhases;
+
+
+
 
         public World World { get { return tilemap; } set { tilemap = value; } }
 
         public IEnumerator Generate()
         {
-            string input = "";
-            foreach(string phase in phases)
-            {
-                Output output=DoPhase(input, phase);
-                input = output.OutputString;
-                yield return new WaitForEndOfFrame();
-            }
-            print(input);
+            List<string> inputs = DoPhase("", firstPhase, numLevels, spaceSize);
+            yield return new WaitForEndOfFrame();
+            inputs=DoMorePhases(inputs,beginPhases,numLevels,spaceSize);
+            yield return new WaitForEndOfFrame();
+            List<string> result = DoMorePhases(inputs, lastPhases, 1, 1);
+            yield return new WaitForEndOfFrame();
+            print($"Result: {result[0]}");
         }
 
-        private Output DoPhase(string input, string phase)
+        private List<string> DoPhase(string input,string phase, int numLevels,int spaceSize)
+        {
+            List<string> models=new List<string>();
+            for(int i=0;i<numLevels;i++)
+            {
+                List<string> tmpModels = Solve(input, phase, numLevels, numRooms, maxRoomSize, distanceBetweenRooms, maxPathLength, spaceSize, numTraps, numTreasures, numItems, numEnemiesSpawnPoints, randomStart,models);
+                models.Add(tmpModels[UnityEngine.Random.Range(0, tmpModels.Count)]);
+            }
+            return models;
+        }
+
+        public List<string> DoMorePhases(List<string> inputs, List<string> phases,int numLevels,int spaceSize)
+        {
+            List<string> models=new List<string>();
+            for(int i=0;i<inputs.Count;i++)
+            {
+                string input = inputs[i];
+                for(int j=0; j<phases.Count;j++)
+                {
+                    string phase = phases[j];
+                    List<string> result=DoPhase(input,phase,1,spaceSize);
+                    input = GetRandomModels(result, 1)[0];
+                }
+                models.Add(input);
+            }
+            return models;
+        }
+
+        private List<string> Solve(string input, string phase,int numLevels,int numRooms,int maxRoomSize,int distanceBetweenRooms,int maxPathLength,int spaceSize,int numTraps, int numTreasures,int numItems,int numEnemies,bool randomStart,List<string> previousLevels=null)
         {
             Handler handler = new DesktopHandler(new ClingoDesktopService("clingo"));
-            foreach (OptionDescriptor option in GetArgs())
+            List<OptionDescriptor> options = GetOptions(numLevels, numRooms, maxRoomSize, distanceBetweenRooms, maxPathLength, spaceSize, numTraps, numTreasures, numItems, numEnemies, randomStart);
+            foreach (OptionDescriptor option in options)
                 handler.AddOption(option);
             string path = Application.dataPath + "\\Mazer\\Generator\\LogicPrograms\\" + phase;
             print(path);
@@ -134,11 +177,55 @@ namespace Mazer.Generators
             //program.AddProgram("point(0,0).");
             print(program.Programs);
             handler.AddProgram(program);
-            
-            
             Output output = handler.StartSync();
-            print(output.OutputString);
-            return output;
+            JObject json = JObject.Parse(output.OutputString);
+
+            print(json.ToString());
+            List<string> bestModels = ExtractMostDifferentModels(json,numLevels);
+            if (bestModels.Count == 0)
+                throw new MazerException(phase, output);
+            return bestModels;
+        }
+
+        private List<string> ExtractMostDifferentModels(JObject json,int numLevels)
+        {
+            Dictionary<int, List<string>> dict = ExtractAllModels(json);
+            List<string> models=new List<string>();
+            foreach(List<string> modelList in dict.Values)
+            {
+                string model = modelList.Aggregate<string>((string a, string b) => a + ".\n" + b);
+                if (!model.Trim().Equals(""))
+                    model += ".\n";
+                models.Add(model);
+            }
+            return GetRandomModels(models,numLevels);
+        }
+
+        private List<string> GetRandomModels(List<string> models,int numLevels)
+        {
+            List<string> list= new List<string>();
+            for(int i=0;i<numLevels;i++)
+            {
+                string model = models[UnityEngine.Random.RandomRange(0, models.Count)];
+                models.Remove(model);
+                list.Add(model);
+            }
+            return list;
+        }
+
+        private Dictionary<int, List<string>> ExtractAllModels(JObject json)
+        {
+            Dictionary<int, List<string>> dict = new Dictionary<int, List<string>>();
+            List<JToken> listModels = json["Call"][0]["Witnesses"].ToList<JToken>();
+            for(int i = 0; i < listModels.Count;i++)
+            {
+                dict[i] = new List<string>();
+                
+                JToken jsonModel = listModels[i]["Value"];
+                for (int j = 0; j < jsonModel.Count(); j++)
+                    dict[i].Add(jsonModel[j].ToString());
+            }
+            return dict;
         }
 
         private string ReadFile(string path)
@@ -153,7 +240,7 @@ namespace Mazer.Generators
             return cont;
         }
 
-        private List<OptionDescriptor> GetArgs()
+        private List<OptionDescriptor> GetOptions(int numLevels, int numRooms, int maxRoomSize, int distanceBetweenRooms, int maxPathLength, int spaceSize, int numTraps, int numTreasures, int numItems, int numEnemies,bool randomStart)
         {
             List<OptionDescriptor> options = new List<OptionDescriptor>();
             if (maxRoomSize <= corridorSize)
@@ -166,9 +253,9 @@ namespace Mazer.Generators
                 
             }
             //Options
-            options.Add(CreateOption("--models", "=", spaceSize));
+            options.Add(CreateOption("--models", "=", numLevels*spaceSize));
             options.Add(CreateOption("--verbose","=",1));
-            options.Add(CreateOption("--quiet","=",1));
+            //options.Add(CreateOption("--quiet","=",1));
             options.Add(CreateOption("--outf","=",2));
             //options.Add(CreateOption("--text"));
             //options.Add(CreateOption("--lparse-rewrite"));

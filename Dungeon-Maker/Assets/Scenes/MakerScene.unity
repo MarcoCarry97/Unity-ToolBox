@@ -411,8 +411,11 @@ MonoBehaviour:
   treasurePrefab: {fileID: 11400000, guid: eff74f5df34bd6347a7657a19e0f045b, type: 2}
   keyPrefab: {fileID: 11400000, guid: 14094af5889f615408ade3ec7a7f69b6, type: 2}
   enemySpawnTile: {fileID: 11400000, guid: 0a6471337a5a8624bb939f7def02bc1e, type: 2}
-  phases:
-  - create_points.lp
+  firstPhase: create_points.lp
+  beginPhases:
+  - create_size.lp
+  lastPhases:
+  - rooms_doors_2.lp
 --- !u!1 &943235002
 GameObject:
   m_ObjectHideFlags: 0
