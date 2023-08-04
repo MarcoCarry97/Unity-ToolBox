@@ -176,7 +176,7 @@ namespace Mazer.Generators
             tilemap.Size = GetSize(level);
             tilemap.ClearAllTiles();
             yield return new WaitForEndOfFrame();
-            RoomData initRoom = level.GetRoom(level.Init_Room);
+            RoomData initRoom = level.GetRoom(level.Initial_Room);
             int x = initRoom.Center.X;
             int y = initRoom.Center.Y;
             yield return RecursiveBuild(level, initRoom, x, y, visited);

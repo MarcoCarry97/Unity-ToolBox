@@ -127,13 +127,17 @@ namespace Mazer.Generators
 
         public IEnumerator Generate()
         {
+            JObject json=new JObject();
             List<string> inputs = DoPhase("", firstPhase, numLevels, spaceSize);
             yield return new WaitForEndOfFrame();
             inputs=DoMorePhases(inputs,beginPhases,numLevels,spaceSize);
             yield return new WaitForEndOfFrame();
             List<string> result = DoMorePhases(inputs, lastPhases, 1, 1);
             yield return new WaitForEndOfFrame();
-            print($"Result: {result[0]}");
+            JArray levelsInJson = MazerUtils.SerializeLevels(result);
+            json["status"] = "SAT";
+            json["levels"] = levelsInJson;
+            Dungeon = JsonConvert.DeserializeObject<DungeonData>(json.ToString());
         }
 
         private List<string> DoPhase(string input,string phase, int numLevels,int spaceSize)
@@ -171,16 +175,15 @@ namespace Mazer.Generators
             foreach (OptionDescriptor option in options)
                 handler.AddOption(option);
             string path = Application.dataPath + "\\Mazer\\Generator\\LogicPrograms\\" + phase;
-            print(path);
             InputProgram program = new ASPInputProgram();
             program.AddProgram(input + ReadFile(path));
             //program.AddProgram("point(0,0).");
-            print(program.Programs);
             handler.AddProgram(program);
             Output output = handler.StartSync();
             JObject json = JObject.Parse(output.OutputString);
-
-            print(json.ToString());
+            string result = (json["Result"] as JToken).Value<string>();
+            if (result.Equals("UNSATISFIABLE"))
+                throw new MazerException(phase, output);
             List<string> bestModels = ExtractMostDifferentModels(json,numLevels);
             if (bestModels.Count == 0)
                 throw new MazerException(phase, output);
@@ -206,7 +209,7 @@ namespace Mazer.Generators
             List<string> list= new List<string>();
             for(int i=0;i<numLevels;i++)
             {
-                string model = models[UnityEngine.Random.RandomRange(0, models.Count)];
+                string model = models[UnityEngine.Random.Range(0, models.Count)];
                 models.Remove(model);
                 list.Add(model);
             }
@@ -216,7 +219,10 @@ namespace Mazer.Generators
         private Dictionary<int, List<string>> ExtractAllModels(JObject json)
         {
             Dictionary<int, List<string>> dict = new Dictionary<int, List<string>>();
-            List<JToken> listModels = json["Call"][0]["Witnesses"].ToList<JToken>();
+            JToken token = json["Call"][0]["Witnesses"];
+            if(token == null)
+                throw new MazerException();
+            List<JToken> listModels = token.ToList<JToken>();
             for(int i = 0; i < listModels.Count;i++)
             {
                 dict[i] = new List<string>();
@@ -273,6 +279,7 @@ namespace Mazer.Generators
             options.Add(CreateOption("-c num_trap", "=", numTraps));
             options.Add(CreateOption("-c num_treasure", "=", numTreasures));
             options.Add(CreateOption("-c num_item", "=", numItems));
+            options.Add(CreateOption("-c num_enemy", "=", numEnemies));
             options.Add(CreateOption("-c x_start","=", xStart));
             options.Add(CreateOption("-c y_start","=", yStart));
 
@@ -318,10 +325,10 @@ namespace Mazer.Generators
         public IEnumerator Build(LevelData level)
         {
             List<RoomData> visited = new List<RoomData>();
-            tilemap.Size = GetSize(level);
+            tilemap.Size = 50;//GetSize(level);
             tilemap.ClearAllTiles();
             yield return new WaitForEndOfFrame();
-            RoomData initRoom = level.GetRoom(level.Init_Room);
+            RoomData initRoom = level.GetRoom(level.Initial_Room);
             int x = initRoom.Center.X;
             int y = initRoom.Center.Y;
             yield return RecursiveBuild(level, initRoom, x, y, visited);

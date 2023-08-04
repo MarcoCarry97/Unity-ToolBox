@@ -397,7 +397,7 @@ MonoBehaviour:
   numRooms: 7
   maxRoomSize: 10
   corridorSize: 3
-  distanceBetweenRooms: 8
+  distanceBetweenRooms: 12
   maxPathLength: 5
   numTreasures: 5
   spaceSize: 100
@@ -414,8 +414,18 @@ MonoBehaviour:
   firstPhase: create_points.lp
   beginPhases:
   - create_size.lp
-  lastPhases:
   - rooms_doors_2.lp
+  lastPhases:
+  - positions.lp
+  - expansion.lp
+  - expand_pos.lp
+  - initial_end.lp
+  - add_stairs_2.lp
+  - add_traps_2.lp
+  - add_treasures_2.lp
+  - add_keys_2.lp
+  - add_items_2.lp
+  - enemy_spawn_2.lp
 --- !u!1 &943235002
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ namespace Mazer.Data
     public class LevelData : ScriptableObject
     {
         [SerializeField]
-        private int init_room;
+        private int initial_room;
 
         [SerializeField]
         private List<RoomData> rooms;
@@ -25,7 +25,7 @@ namespace Mazer.Data
 
         private DecorationData startPoint;
 
-        public int Init_Room { get { return init_room; } set { init_room = value; } }
+        public int Initial_Room { get { return initial_room; } set { initial_room = value; } }
         public List<RoomData> Rooms { get { return rooms; } set { rooms = value; } }
         public List<DoorData> Doors { get { return doors; } set { doors = value; } }
 
