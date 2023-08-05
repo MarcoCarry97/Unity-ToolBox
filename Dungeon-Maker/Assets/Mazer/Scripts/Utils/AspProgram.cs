@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Newtonsoft;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace Mazer.Utils
 {
@@ -20,12 +21,14 @@ namespace Mazer.Utils
 
         public static AspProgram FromFile(string pathname)
         {
-            throw new NotImplementedException();
-        }
-
-        public AspProgram ToFile()
-        {
-            throw new NotImplementedException();
+            AspProgram program=ScriptableObject.CreateInstance<AspProgram>();
+            StreamReader reader = new StreamReader(pathname);
+            while(!reader.EndOfStream)
+                program.Content = reader.ReadToEnd();
+            reader.Close();
+            string[] parts=pathname.Split('/');
+            program.name = parts[parts.Length-1];
+            return program;
         }
 
         public override string ToString()

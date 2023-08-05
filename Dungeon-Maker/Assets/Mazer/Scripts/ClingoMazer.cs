@@ -7,7 +7,6 @@ using it.unical.mat.embasp.platforms.desktop;
 using it.unical.mat.embasp.specializations.clingo.desktop;
 using Mazer.Data;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,6 +23,8 @@ using Mazer.Utils.Distance;
 
 namespace Mazer.Generators
 {
+    
+
     public class ClingoMazer : MonoBehaviour, IMazer
     {
 
@@ -171,7 +172,9 @@ namespace Mazer.Generators
 
         private List<string> Solve(string input, string phase,int numLevels,int numRooms,int maxRoomSize,int distanceBetweenRooms,int maxPathLength,int spaceSize,int numTraps, int numTreasures,int numItems,int numEnemies,bool randomStart,List<string> previousLevels=null)
         {
-            Handler handler = new DesktopHandler(new ClingoDesktopService("clingo"));
+            string execName = $"{Application.dataPath}/Mazer/Solvers/Windows/clingo";
+            print(execName);
+            Handler handler = new DesktopHandler(new ClingoDesktopService(execName));
             List<OptionDescriptor> options = GetOptions(numLevels, numRooms, maxRoomSize, distanceBetweenRooms, maxPathLength, spaceSize, numTraps, numTreasures, numItems, numEnemies, randomStart);
             foreach (OptionDescriptor option in options)
                 handler.AddOption(option);
@@ -180,7 +183,10 @@ namespace Mazer.Generators
             program.AddProgram(input + ReadFile(path));
             //program.AddProgram("point(0,0).");
             handler.AddProgram(program);
-            Output output = handler.StartSync();
+            it.unical.mat.embasp.@base.Output output = handler.StartSync();
+            print(output.OutputString);
+            if (output.Equals(""))
+                throw new MazerException("Starting generation", output);
             JObject json = JObject.Parse(output.OutputString);
             string result = (json["Result"] as JToken).Value<string>();
             if (result.Equals("UNSATISFIABLE"))

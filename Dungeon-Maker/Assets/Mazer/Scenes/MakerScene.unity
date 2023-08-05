@@ -404,7 +404,7 @@ MonoBehaviour:
   numTraps: 5
   numItems: 5
   numEnemiesSpawnPoints: 5
-  randomStart: 0
+  randomStart: 1
   tile: {fileID: 11400000, guid: 0ea833c86fedd814db3538095d88f56e, type: 2}
   trapTile: {fileID: 11400000, guid: 239cddbc0f5a67f4fa92e6d532e324d2, type: 2}
   stairsTile: {fileID: 11400000, guid: 5b1834ec8bad8404d859e5301c7a475d, type: 2}
