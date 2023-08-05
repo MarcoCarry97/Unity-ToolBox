@@ -20,6 +20,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 using Mazer.Utils;
+using Mazer.Utils.Distance;
 
 namespace Mazer.Generators
 {
@@ -184,24 +185,44 @@ namespace Mazer.Generators
             string result = (json["Result"] as JToken).Value<string>();
             if (result.Equals("UNSATISFIABLE"))
                 throw new MazerException(phase, output);
-            List<string> bestModels = ExtractMostDifferentModels(json,numLevels);
+            List<string> bestModels = ExtractMostDifferentModels(json,numLevels,previousLevels);
             if (bestModels.Count == 0)
                 throw new MazerException(phase, output);
             return bestModels;
         }
 
-        private List<string> ExtractMostDifferentModels(JObject json,int numLevels)
+        private List<string> ExtractMostDifferentModels(JObject json,int numLevels,List<string> previousLevels)
         {
             Dictionary<int, List<string>> dict = ExtractAllModels(json);
-            List<string> models=new List<string>();
-            foreach(List<string> modelList in dict.Values)
+            List<string> models = MazerUtils.ConvertToListOfStrings(dict);
+            List<string> result = new List<string>();
+            if (previousLevels.Count == 0)
+                result.Add(GetRandomModels(models, 1)[0]);
+            else for(int i=0;i<models.Count;i++)
             {
-                string model = modelList.Aggregate<string>((string a, string b) => a + ".\n" + b);
-                if (!model.Trim().Equals(""))
-                    model += ".\n";
-                models.Add(model);
+                    string model= models[i];
+                    int distance = 0;
+                    string bestModel = GetRandomModels(models, 1)[0];
+                    foreach(string previousLevel in previousLevels)
+                    {
+                        int dist = 0;
+                        foreach(Func<string, string,int> metric in DistanceMetrics.Metrics)
+                        {
+                            dist += metric(model, previousLevel);
+                        }
+                        if(distance<=dist)
+                        {
+                            bestModel = model;
+                            distance = dist;
+                        }
+                    }
+                    if(bestModel!=null)
+                    {
+                        result.Add(bestModel);
+                        models.Remove(bestModel);
+                    }
             }
-            return GetRandomModels(models,numLevels);
+            return result;
         }
 
         private List<string> GetRandomModels(List<string> models,int numLevels)
@@ -325,7 +346,7 @@ namespace Mazer.Generators
         public IEnumerator Build(LevelData level)
         {
             List<RoomData> visited = new List<RoomData>();
-            tilemap.Size = 50;//GetSize(level);
+            tilemap.Size = GetSize(level);
             tilemap.ClearAllTiles();
             yield return new WaitForEndOfFrame();
             RoomData initRoom = level.GetRoom(level.Initial_Room);
@@ -490,7 +511,6 @@ namespace Mazer.Generators
         private IEnumerator DrawStairs(LevelData level)
         {
             Vector3Int pos = new Vector3Int(level.Stairs.Position.X, level.Stairs.Position.Y, 0);
-            print("Stairs: " + pos);
             tilemap.SetTile(pos, stairsTile, 1);
             yield return new WaitForEndOfFrame();
         }

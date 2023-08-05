@@ -29,7 +29,7 @@ public class MapInstantiator : MonoBehaviour
             maker.World = world;
             Vector3 vecToCenter = new Vector3(level.GetRoom(level.Initial_Room).TrueCenter.X, level.GetRoom(level.Initial_Room).TrueCenter.Y, 0);
             if (lastWorld != null)
-                world.transform.position = lastWorld.transform.position + Vector3.right * 300 - vecToCenter;
+                world.transform.position = lastWorld.transform.position - vecToCenter + Vector3.right*100;
             lastWorld = world;
             yield return StartCoroutine(maker.Build(level));
         }

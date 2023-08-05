@@ -13,6 +13,8 @@ namespace Mazer.Utils
 
     public static class MazerUtils
     {
+        
+
         public static JArray SerializeLevels(List<string> levels)
         {
             JArray json=new JArray();
@@ -196,7 +198,6 @@ namespace Mazer.Utils
                 if (roomJsonId.Equals(id))
                 {
                     JObject json = new JObject();
-                    UnityEngine.Debug.Log(roomJson["id"].ToString()+" "+id);
                     json["id"] = id;
                     json["room"] = roomId;
                     json["center"] = roomJson["center"];
@@ -229,11 +230,27 @@ namespace Mazer.Utils
             dict[label] = ExtractFromList(list, label);
         }
 
-        private static List<string> ToAspList(string level)
+        public static List<string> ToAspList(string level)
         {
             return level.Split(".")
                 .Where((s)=>!s.Trim().Equals(""))
                 .ToList<string>();
+        }
+
+        public static string ToAspString(List<string> modelList)
+        {
+            string model = modelList.Aggregate<string>((string a, string b) => a + ".\n" + b);
+            if (!model.Trim().Equals(""))
+                model += ".\n";
+            return model;
+        }
+
+        public static List<string> ConvertToListOfStrings(Dictionary<int,List<string>> dict)
+        {
+            List<string> models = new List<string>();
+            foreach (List<string> modelList in dict.Values)
+                models.Add(MazerUtils.ToAspString(modelList));
+            return models;
         }
 
         private static List<string> ExtractFromList(List<string> list, string factName)

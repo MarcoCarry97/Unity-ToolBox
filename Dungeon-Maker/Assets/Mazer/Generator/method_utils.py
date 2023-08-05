@@ -346,8 +346,8 @@ def size_distance(current_level, previous):
     for cur_room in current_dict["rooms"]:
         for prev_room in previous_dict["rooms"]:
             if cur_room["id"]==prev_room["id"]:
-                distx=abs(cur_room["size"]["x"]-prev_room["center"]["x"])
-                disty=abs(cur_room["size"]["y"]-prev_room["center"]["y"])
+                distx=abs(cur_room["size"]["x"]-prev_room["size"]["x"])
+                disty=abs(cur_room["size"]["y"]-prev_room["size"]["y"])
                 distance+=distx+disty
     return distance
 
