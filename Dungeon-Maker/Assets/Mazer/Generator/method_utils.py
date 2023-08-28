@@ -1,3 +1,4 @@
+import sys
 
 import clingo
 
@@ -233,7 +234,7 @@ def get_models_from_more_files(inputs,files,num_levels,num_rooms, size, distance
 def single_model_solving(input,filename,num_levels,num_rooms, size, distance,path,space,num_trap, num_treasure, num_item,rand_init,corr_size,num_enemy, previous=None):
     input=to_asp_format(input)
 
-    file = open("Logic programs/"+filename)
+    file = open("LogicPrograms/"+filename)
     program = input+file.read()
     x_start=0
     y_start=0
@@ -246,6 +247,10 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
         y_start=yrand*distance
         #print(str(x_start)+" "+str(y_start))
     args=["--model="+str(num_levels*space),
+          "--rand-freq=0.1",
+          "--no-backprop",
+          "--restart-on-model",
+          #"--seed=1",
           "-c num_rooms="+str(num_rooms),
           "-c max_size="+str(size),
           "-c max_path="+str(path),
@@ -260,7 +265,9 @@ def single_model_solving(input,filename,num_levels,num_rooms, size, distance,pat
     control = clingo.Control(arguments=args)
     control.add("base", [], program)
     context=mazer_context()
+    sys.stderr.write("Grounding for "+filename+" ...\n")
     control.ground([("base", [])], context=context)
+    sys.stderr.write("Solving for "+filename+" ...\n")
     handle=control.solve(yield_=True)
     models=to_model_list(handle)
 
