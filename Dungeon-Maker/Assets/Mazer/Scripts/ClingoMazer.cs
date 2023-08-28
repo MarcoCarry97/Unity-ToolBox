@@ -289,7 +289,7 @@ namespace Mazer.Generators
             print(0.5f.ToString());
             options.Add(CreateOption("--models", "=", numLevels*spaceSize));
             options.Add(CreateOption("--verbose","=",1));
-            //options.Add(CreateOption("--rand_freq", "=","0.1"));
+            //options.Add(CreateOption("--rand-freq", "=","0.1"));
             //options.Add(CreateOption("--quiet","=",1));
             options.Add(CreateOption("--no-backprop", null, null));
             options.Add(CreateOption("--restart-on-model", null, null));
