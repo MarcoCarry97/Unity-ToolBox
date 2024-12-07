@@ -13,18 +13,9 @@ namespace Band.Core
     public class GameController : MonoBehaviour,IController
     {
         private static GameController instance;
-        public static GameController Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = GameObject.FindObjectOfType<GameController>();
-                    DontDestroyOnLoad(instance);
-                }
-                return instance;
-            }
-        }
+
+        public static GameController Instance { get; private set; }
+        
 
         private List<IController> controllers;
 
@@ -36,7 +27,9 @@ namespace Band.Core
 
         private void Awake()
         {
-            Start();
+            if (instance != null && instance != this)
+                Destroy(this);
+            else instance = this;
         }
 
         public T Get<T>() where T : IController
@@ -46,7 +39,7 @@ namespace Band.Core
                 if (cont is T)
                     controller = cont;
             if (controller == null)
-                throw new NullReferenceException($"There is no object of type ...");
+                throw new NullReferenceException($"There is no object of type ${typeof(T)}");
             return (T) controller;
         }
 
